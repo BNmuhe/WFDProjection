@@ -32,7 +32,9 @@ public class MainActivity extends BaseActivity {
                                 Manifest.permission.ACCESS_WIFI_STATE,
                                 Manifest.permission.CHANGE_WIFI_STATE,
                                 Manifest.permission.ACCESS_FINE_LOCATION,
-                                Manifest.permission.ACCESS_COARSE_LOCATION}, CODE_REQ_PERMISSIONS));
+                                Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.FOREGROUND_SERVICE,
+                                Manifest.permission.INTERNET}, CODE_REQ_PERMISSIONS));
 
         findViewById(R.id.btnReceiver).setOnClickListener(v ->
                 startActivity(ReceiverActivity.class));

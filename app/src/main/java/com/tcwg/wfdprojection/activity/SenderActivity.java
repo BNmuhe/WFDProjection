@@ -3,12 +3,15 @@ package com.tcwg.wfdprojection.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.projection.MediaProjectionManager;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -23,6 +26,7 @@ import com.tcwg.wfdprojection.R;
 import com.tcwg.wfdprojection.adapter.DeviceAdapter;
 import com.tcwg.wfdprojection.boardcast.DirectBroadcastReceiver;
 import com.tcwg.wfdprojection.listener.DirectActionListener;
+import com.tcwg.wfdprojection.service.ScreenService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +36,7 @@ public class SenderActivity extends BaseActivity {
 
 
     private static final String TAG = "SenderActivity";
+    private static final int PROJECTION_REQUEST_CODE = 1;
 
     private TextView tv_myDeviceName;
     private Button btn_startSend;
@@ -55,6 +60,8 @@ public class SenderActivity extends BaseActivity {
     private BroadcastReceiver broadcastReceiver;
 
     private WifiP2pDevice mWifiP2pDevice;
+
+    private MediaProjectionManager mediaProjectionManager;
 
     private final DirectActionListener directActionListener = new DirectActionListener() {
         @Override
@@ -129,6 +136,12 @@ public class SenderActivity extends BaseActivity {
             finish();
             return;
         }
+        mediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
+        if (mediaProjectionManager == null) {
+            finish();
+            return;
+        }
+
         channel = wifiP2pManager.initialize(this, getMainLooper(), directActionListener);
         broadcastReceiver = new DirectBroadcastReceiver(wifiP2pManager, channel, directActionListener);
         registerReceiver(broadcastReceiver, DirectBroadcastReceiver.getIntentFilter());
@@ -177,7 +190,20 @@ public class SenderActivity extends BaseActivity {
             });
 
         });
-        btn_disconnect.setOnClickListener(v -> wifiP2pManager.removeGroup(channel, new WifiP2pManager.ActionListener() {
+        btn_disconnect.setOnClickListener(v -> disconnect());
+        btn_startSend.setOnClickListener(v -> startProjection());
+    }
+
+    private void disconnect(){
+        btn_disconnect.setEnabled(false);
+        btn_startSend.setEnabled(false);
+
+
+
+        Intent service = new Intent(this, ScreenService.class);
+        stopService(service);
+        Log.e(TAG,"disconnect");
+        wifiP2pManager.removeGroup(channel, new WifiP2pManager.ActionListener() {
             @Override
             public void onFailure(int reasonCode) {
                 Log.e(TAG, "disconnect onFailure:" + reasonCode);
@@ -186,14 +212,39 @@ public class SenderActivity extends BaseActivity {
             @Override
             public void onSuccess() {
                 Log.e(TAG, "disconnect onSuccess");
-                btn_disconnect.setEnabled(false);
-                btn_startSend.setEnabled(false);
             }
-        }));
-        btn_startSend.setOnClickListener(v -> {
-
         });
     }
+
+    private void startProjection() {
+        Intent intent = mediaProjectionManager.createScreenCaptureIntent();
+        startActivityForResult(intent, PROJECTION_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        Log.e(TAG,"onActivityResult");
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+        if (requestCode == PROJECTION_REQUEST_CODE) {
+            Intent service = new Intent(this, ScreenService.class);
+            service.putExtra("code", resultCode);
+            service.putExtra("data", data);
+            service.putExtra("IP",wifiP2pInfo);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Log.e(TAG,"startForegroundService");
+                startForegroundService(service);
+            } else {
+                Log.e(TAG,"startService");
+                startService(service);
+            }
+        }
+    }
+
 
     private void connect() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

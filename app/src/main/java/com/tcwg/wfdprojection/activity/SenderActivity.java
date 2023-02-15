@@ -28,6 +28,7 @@ import com.tcwg.wfdprojection.boardcast.DirectBroadcastReceiver;
 import com.tcwg.wfdprojection.listener.DirectActionListener;
 import com.tcwg.wfdprojection.service.ScreenService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -191,15 +192,18 @@ public class SenderActivity extends BaseActivity {
 
         });
         btn_disconnect.setOnClickListener(v -> disconnect());
-        btn_startSend.setOnClickListener(v -> startProjection());
+        btn_startSend.setOnClickListener(v -> {
+            try {
+                startProjection();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     private void disconnect(){
         btn_disconnect.setEnabled(false);
         btn_startSend.setEnabled(false);
-
-
-
         Intent service = new Intent(this, ScreenService.class);
         stopService(service);
         Log.e(TAG,"disconnect");
@@ -208,7 +212,6 @@ public class SenderActivity extends BaseActivity {
             public void onFailure(int reasonCode) {
                 Log.e(TAG, "disconnect onFailure:" + reasonCode);
             }
-
             @Override
             public void onSuccess() {
                 Log.e(TAG, "disconnect onSuccess");
@@ -216,15 +219,15 @@ public class SenderActivity extends BaseActivity {
         });
     }
 
-    private void startProjection() {
+    private void startProjection() throws IOException {
         Intent intent = mediaProjectionManager.createScreenCaptureIntent();
         startActivityForResult(intent, PROJECTION_REQUEST_CODE);
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
-        Log.e(TAG,"onActivityResult");
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode != RESULT_OK) {
@@ -236,13 +239,13 @@ public class SenderActivity extends BaseActivity {
             service.putExtra("data", data);
             service.putExtra("IP",wifiP2pInfo);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Log.e(TAG,"startForegroundService");
                 startForegroundService(service);
             } else {
-                Log.e(TAG,"startService");
                 startService(service);
             }
+
         }
+
     }
 
 
@@ -259,6 +262,7 @@ public class SenderActivity extends BaseActivity {
                 @Override
                 public void onSuccess() {
                     Log.e(TAG, "connect onSuccess");
+
                     showToast("连接成功 ");
 
                 }

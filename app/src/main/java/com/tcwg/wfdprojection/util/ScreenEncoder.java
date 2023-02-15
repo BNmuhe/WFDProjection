@@ -19,9 +19,9 @@ public class ScreenEncoder extends Thread{
 
     public static final String TAG = ScreenEncoder.class.getSimpleName();
     //不同手机支持的编码最大分辨率不同
-    private static final int VIDEO_WIDTH = 2160;
-    private static final int VIDEO_HEIGHT = 3840;
-    private static final int SCREEN_FRAME_RATE = 20;
+    private static final int VIDEO_WIDTH = 1600;
+    private static final int VIDEO_HEIGHT = 2560;
+    private static final int SCREEN_FRAME_RATE = 60;
     private static final int SCREEN_FRAME_INTERVAL = 1;
     private static final long SOCKET_TIME_OUT = 10000;
     // I帧
@@ -73,7 +73,7 @@ public class ScreenEncoder extends Thread{
             e.printStackTrace();
         }
         start();
-        Log.e(TAG, "encoder start");
+
     }
 
     @Override
@@ -84,18 +84,22 @@ public class ScreenEncoder extends Thread{
             int outPutBufferId = mMediaCodec.dequeueOutputBuffer(bufferInfo, SOCKET_TIME_OUT);
             if (outPutBufferId >= 0) {
                 ByteBuffer byteBuffer = mMediaCodec.getOutputBuffer(outPutBufferId);
-                try {
                     encodeData(byteBuffer, bufferInfo);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
                 mMediaCodec.releaseOutputBuffer(outPutBufferId, false);
             }
+        }
+        if (mMediaCodec != null) {
+            mMediaCodec.release();
+
+        }
+        if (mediaProjection != null) {
+            mediaProjection.stop();
         }
     }
 
 
-    private void encodeData(ByteBuffer byteBuffer, MediaCodec.BufferInfo bufferInfo) throws IOException {
+    private void encodeData(ByteBuffer byteBuffer, MediaCodec.BufferInfo bufferInfo){
+        Log.e(TAG, "encodeData");
         int offSet = 4;
         if (byteBuffer.get(2) == 0x01) {
             offSet = 3;
@@ -110,23 +114,21 @@ public class ScreenEncoder extends Thread{
             byte[] newBytes = new byte[vps_pps_sps.length + bytes.length];
             System.arraycopy(vps_pps_sps, 0, newBytes, 0, vps_pps_sps.length);
             System.arraycopy(bytes, 0, newBytes, vps_pps_sps.length, bytes.length);
+
             senderSocketManager.sendData(newBytes);
         } else {
             byte[] bytes = new byte[bufferInfo.size];
             byteBuffer.get(bytes);
+            Log.e(TAG, "encoder2 start");
             senderSocketManager.sendData(bytes);
         }
     }
 
 
     public void stopEncode() {
+
         mPlaying = false;
-        if (mMediaCodec != null) {
-            mMediaCodec.release();
-        }
-        if (mediaProjection != null) {
-            mediaProjection.stop();
-        }
+
         Log.e(TAG, "encoder stop");
     }
 

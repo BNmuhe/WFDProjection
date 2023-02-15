@@ -2,7 +2,6 @@ package com.tcwg.wfdprojection.activity;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
@@ -10,7 +9,6 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.TextView;
 
 import  com.tcwg.wfdprojection.R;
 import com.tcwg.wfdprojection.boardcast.DirectBroadcastReceiver;
@@ -36,6 +34,9 @@ public class ReceiverActivity extends BaseActivity{
     private Button btn_createGroup;
 
     private  Button btn_removeGroup;
+    private  Button btn_startListen;
+
+
 
 
 
@@ -52,9 +53,7 @@ public class ReceiverActivity extends BaseActivity{
             Log.e(TAG, "groupFormed：" + wifiP2pInfo.groupFormed);
             if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
                 connectionInfoAvailable = true;
-                /*if (wifiServerService != null) {
-                    startService(WifiServerService.class);
-                }*/
+
             }
         }
 
@@ -108,10 +107,13 @@ public class ReceiverActivity extends BaseActivity{
         setTitle("接收方");
         btn_createGroup = findViewById(R.id.btn_createGroup);
         btn_removeGroup = findViewById(R.id.btn_removeGroup);
+        btn_startListen = findViewById(R.id.btn_startListen);
         btn_removeGroup.setEnabled(false);
 
-        btn_removeGroup.setOnClickListener(v ->{
+        btn_startListen.setOnClickListener(v -> {
 
+
+            startActivity(SurfaceActivity.class);
         });
 
         btn_createGroup.setOnClickListener(v ->{
@@ -124,7 +126,9 @@ public class ReceiverActivity extends BaseActivity{
                     Log.e(TAG, "createGroup onSuccess");
                     btn_createGroup.setEnabled(false);
                     btn_removeGroup.setEnabled(true);
+
                     showToast("onSuccess");
+
                 }
 
                 @Override
@@ -135,19 +139,21 @@ public class ReceiverActivity extends BaseActivity{
             });
         });
 
-        btn_removeGroup.setOnClickListener(v -> removeGroup());
+        btn_removeGroup.setOnClickListener(v -> {
+
+
+            removeGroup();
+        });
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        removeGroup();
         unregisterReceiver(broadcastReceiver);
 
-        if (connectionInfoAvailable) {
-            removeGroup();
-        }
+
     }
 
 

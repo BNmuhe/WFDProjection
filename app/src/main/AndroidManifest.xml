@@ -23,11 +23,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WFDProjection"
         tools:targetApi="31">
+        <activity
+            android:name=".activity.SurfaceActivity"
+            android:exported="false" />
+
         <service
             android:name=".service.ScreenService"
             android:enabled="true"
             android:exported="true"
-            android:foregroundServiceType="mediaProjection"></service>
+            android:foregroundServiceType="mediaProjection" />
 
         <activity
             android:name=".MainActivity"

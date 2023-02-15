@@ -2,52 +2,49 @@ package com.tcwg.wfdprojection.connection;
 
 import android.util.Log;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
 
-public class Sender extends Thread{
+import java.net.URI;
 
+public class Sender extends WebSocketClient {
 
     private final String TAG = Sender.class.getSimpleName();
 
-    private String IP;
 
-    private int port;
 
-    Socket socket;
-    InputStream inputStream;
-    OutputStream outputStream;
+    public Sender(URI serverUri) {
+        super(serverUri);
+    }
 
-    public void init(String IP, int port){
-        this.IP = IP;
-        this.port = port;
-        Log.e(TAG,"get receiver info: "+IP+":"+port);
+
+
+    @Override
+    public void onOpen(ServerHandshake handshake) {
+        Log.e(TAG, "onOpen");
     }
 
     @Override
-    public void run() {
-        try {
-            socket = new Socket(IP,port);
-            inputStream = socket.getInputStream();
-            outputStream = socket.getOutputStream();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        Log.e(TAG,"socket established");
+    public void onMessage(String message) {
+
     }
 
-    public void sendData(byte[] bytes) throws IOException {
-        if(socket!=null&& socket.isConnected()){
-            Log.e(TAG, "sendData");
-            outputStream.write(bytes);
-        }
+    @Override
+    public void onClose(int code, String reason, boolean remote) {
+
     }
 
-    public void close() throws IOException {
-        if(socket!=null){
-            socket.close();
+    @Override
+    public void onError(Exception ex) {
+
+    }
+
+    public void sendData(byte[] bytes) {
+
+        if (this.isOpen()) {
+            // 通过WebSocket 发送数据
+            Log.e(TAG, "data");
+            this.send(bytes);
         }
     }
 

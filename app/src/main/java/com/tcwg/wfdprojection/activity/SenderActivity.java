@@ -35,7 +35,6 @@ import java.util.List;
 
 public class SenderActivity extends BaseActivity {
 
-
     private static final String TAG = "SenderActivity";
     private static final int PROJECTION_REQUEST_CODE = 1;
 
@@ -115,7 +114,6 @@ public class SenderActivity extends BaseActivity {
             Log.e(TAG, "onChannelDisconnected");
         }
     };
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

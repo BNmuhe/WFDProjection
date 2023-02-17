@@ -81,14 +81,11 @@ public class ScreenService extends Service {
         Notification.Builder builder = new Notification.Builder(this.getApplicationContext());
         Intent nfIntent = new Intent(this, SenderActivity.class);
 
-        builder
-                .setContentIntent(PendingIntent.getActivity(this, 0, nfIntent, 0))
-                .setLargeIcon(
-                        BitmapFactory.decodeResource(
-                                this.getResources(), R.mipmap.ic_launcher)) // 设置下拉列表中的图标(大图标)
-                .setSmallIcon(R.mipmap.ic_launcher) // 设置状态栏内的小图标
-                .setContentText("is running......") // 设置上下文内容
-                .setWhen(System.currentTimeMillis()); // 设置该通知发生的时间
+        builder.setContentIntent(PendingIntent.getActivity(this, 0, nfIntent, 0))
+                    .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher)) // 设置下拉列表中的图标(大图标)
+                    .setSmallIcon(R.mipmap.ic_launcher) // 设置状态栏内的小图标
+                    .setContentText("is running......") // 设置上下文内容
+                    .setWhen(System.currentTimeMillis()); // 设置该通知发生的时间
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder.setChannelId("notification_id");

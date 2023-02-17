@@ -36,10 +36,6 @@ public class ReceiverActivity extends BaseActivity{
     private  Button btn_removeGroup;
     private  Button btn_startListen;
 
-
-
-
-
     private final DirectActionListener directActionListener = new DirectActionListener() {
         @Override
         public void wifiP2pEnabled(boolean enabled) {
@@ -82,7 +78,6 @@ public class ReceiverActivity extends BaseActivity{
             Log.e(TAG, "onChannelDisconnected");
         }
     };
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

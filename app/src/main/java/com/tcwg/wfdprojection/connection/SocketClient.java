@@ -7,13 +7,13 @@ import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 
-public class Sender extends WebSocketClient {
+public class SocketClient extends WebSocketClient {
 
-    private final String TAG = Sender.class.getSimpleName();
+    private final String TAG = SocketClient.class.getSimpleName();
 
 
 
-    public Sender(URI serverUri) {
+    public SocketClient(URI serverUri) {
         super(serverUri);
     }
 

@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class ScreenDecoder {
-    private static final int VIDEO_WIDTH = 1600;
-    private static final int VIDEO_HEIGHT = 2560;
+    private static final int VIDEO_WIDTH = 1080;
+    private static final int VIDEO_HEIGHT = 1920;
     private static final long DECODE_TIME_OUT = 10000;
     private static final int SCREEN_FRAME_RATE = 60;
     private static final int SCREEN_FRAME_INTERVAL = 1;

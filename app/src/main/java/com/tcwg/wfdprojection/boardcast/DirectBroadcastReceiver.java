@@ -73,12 +73,7 @@ public class DirectBroadcastReceiver extends BroadcastReceiver {
                 case WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION: {
                     NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
                     if (networkInfo != null && networkInfo.isConnected()) {
-                        mWifiP2pManager.requestConnectionInfo(mChannel, new WifiP2pManager.ConnectionInfoListener() {
-                            @Override
-                            public void onConnectionInfoAvailable(WifiP2pInfo info) {
-                                mDirectActionListener.onConnectionInfoAvailable(info);
-                            }
-                        });
+                        mWifiP2pManager.requestConnectionInfo(mChannel, info -> mDirectActionListener.onConnectionInfoAvailable(info));
                         Log.e(TAG, "已连接p2p设备");
                     } else {
                         mDirectActionListener.onDisconnection();

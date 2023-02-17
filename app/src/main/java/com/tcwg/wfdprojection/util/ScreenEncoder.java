@@ -19,8 +19,8 @@ public class ScreenEncoder extends Thread{
 
     public static final String TAG = ScreenEncoder.class.getSimpleName();
     //不同手机支持的编码最大分辨率不同
-    private static final int VIDEO_WIDTH = 1600;
-    private static final int VIDEO_HEIGHT = 2560;
+    private static final int VIDEO_WIDTH = 1080;
+    private static final int VIDEO_HEIGHT = 1920;
     private static final int SCREEN_FRAME_RATE = 60;
     private static final int SCREEN_FRAME_INTERVAL = 1;
     private static final long SOCKET_TIME_OUT = 10000;

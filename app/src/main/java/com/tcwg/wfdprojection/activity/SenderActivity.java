@@ -26,11 +26,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tcwg.wfdprojection.R;
 import com.tcwg.wfdprojection.adapter.DeviceAdapter;
 import com.tcwg.wfdprojection.boardcast.DirectBroadcastReceiver;
-import com.tcwg.wfdprojection.constant.SenderConstants;
+import com.tcwg.wfdprojection.constant.P2pDeviceConstants;
 import com.tcwg.wfdprojection.listener.DirectActionListener;
 import com.tcwg.wfdprojection.service.ScreenService;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -196,9 +195,9 @@ public class SenderActivity extends BaseActivity {
     private  void initConstant(){
         Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
-        SenderConstants.setVideoHeight(point.y);
-        SenderConstants.setVideoWidth(point.x);
-        Log.e(TAG,"set Constant width "+SenderConstants.getVideoWidth()+" height "+SenderConstants.getVideoHeight()+" fps "+SenderConstants.getScreenFrameRate());
+        P2pDeviceConstants.setVideoHeight(point.y);
+        P2pDeviceConstants.setVideoWidth(point.x);
+        Log.e(TAG,"set Constant width "+ P2pDeviceConstants.getVideoWidth()+" height "+ P2pDeviceConstants.getVideoHeight()+" fps "+ P2pDeviceConstants.getScreenFrameRate());
     }
 
     private void stopSend(){

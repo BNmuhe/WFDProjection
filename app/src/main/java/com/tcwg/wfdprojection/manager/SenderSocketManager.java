@@ -20,24 +20,31 @@ public class SenderSocketManager {
     private SocketClient socketClient;
     private ScreenEncoder mScreenEncoder;
 
-    public SenderSocketManager(String IP) {
+    private MediaProjection mediaProjection;
+
+    public SenderSocketManager(String IP,MediaProjection mediaProjection) {
         this.IP=IP;
+        this.mediaProjection = mediaProjection;
     }
-    public void start(MediaProjection mediaProjection) {
+    public void start() {
 
         try {
             // 需要修改为服务端的IP地址与端口
             URI uri = new URI("ws://"+IP+":" + SOCKET_PORT);
             Log.e(TAG,uri.toString());
-            socketClient = new SocketClient(uri);
+            socketClient = new SocketClient(uri,this);
             socketClient.connect();
             Log.e(TAG,"connect");
-            mScreenEncoder = new ScreenEncoder(mediaProjection, this);
-            mScreenEncoder.startEncode();
 
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public void startEncode(){
+        mScreenEncoder = new ScreenEncoder(mediaProjection, this);
+        mScreenEncoder.startEncode();
     }
 
 

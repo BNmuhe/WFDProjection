@@ -69,8 +69,8 @@ public class ScreenService extends Service {
         }
         Log.e(TAG, "project start");
         // 初始化服务器端
-        senderSocketManager = new SenderSocketManager(wifiP2pInfo.groupOwnerAddress.getHostAddress());
-        senderSocketManager.start(mediaProjection);
+        senderSocketManager = new SenderSocketManager(wifiP2pInfo.groupOwnerAddress.getHostAddress(),mediaProjection);
+        senderSocketManager.start();
     }
 
 

@@ -8,7 +8,7 @@ import android.media.projection.MediaProjection;
 import android.util.Log;
 import android.view.Surface;
 
-import com.tcwg.wfdprojection.constant.SenderConstants;
+import com.tcwg.wfdprojection.constant.P2pDeviceConstants;
 import com.tcwg.wfdprojection.manager.SenderSocketManager;
 
 import java.io.IOException;
@@ -46,18 +46,17 @@ public class ScreenEncoder extends Thread{
     public ScreenEncoder(MediaProjection mMediaProjection, SenderSocketManager mSenderSocketManager) {
         this.mediaProjection = mMediaProjection;
         this.senderSocketManager = mSenderSocketManager;
-        this.VIDEO_WIDTH = SenderConstants.getVideoWidth();
-        this.VIDEO_HEIGHT = SenderConstants.getVideoHeight();
-        this.SCREEN_FRAME_RATE = SenderConstants.getScreenFrameRate();
+        this.VIDEO_WIDTH = P2pDeviceConstants.getVideoWidth();
+        this.VIDEO_HEIGHT = P2pDeviceConstants.getVideoHeight();
+        this.SCREEN_FRAME_RATE = P2pDeviceConstants.getScreenFrameRate();
     }
 
     public void startEncode() {
         MediaFormat mediaFormat =
                 MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_HEVC, VIDEO_WIDTH, VIDEO_HEIGHT);
-        mediaFormat.setInteger(
-                MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+        mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         // 比特率（比特/秒）
-        mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, VIDEO_WIDTH * VIDEO_HEIGHT);
+        mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 4096000);
         // 帧率
         mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, SCREEN_FRAME_RATE);
         // I帧的频率

@@ -1,6 +1,6 @@
 package com.tcwg.wfdprojection.constant;
 
-public class SenderConstants {
+public class P2pDeviceConstants {
     private static Integer VIDEO_WIDTH = 1080;
     private static Integer VIDEO_HEIGHT = 1920;
     private static Integer SCREEN_FRAME_RATE = 60;

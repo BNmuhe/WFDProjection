@@ -4,7 +4,7 @@ import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.view.Surface;
 
-import com.tcwg.wfdprojection.constant.ReceiverConstants;
+import com.tcwg.wfdprojection.constant.MyDeviceConstants;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -12,16 +12,16 @@ import java.nio.ByteBuffer;
 public class ScreenDecoder {
     private int VIDEO_WIDTH;
     private int VIDEO_HEIGHT;
-    private int SCREEN_FRAME_RATE;
+//    private int SCREEN_FRAME_RATE;
     private static final long DECODE_TIME_OUT = 10000;
-    private static final int SCREEN_FRAME_INTERVAL = 1;
+//    private static final int SCREEN_FRAME_INTERVAL = 1;
     private MediaCodec mMediaCodec;
 
     public ScreenDecoder() {
 
-        this.VIDEO_WIDTH = ReceiverConstants.getVideoWidth();
-        this.VIDEO_HEIGHT = ReceiverConstants.getVideoHeight();
-        this.SCREEN_FRAME_RATE = ReceiverConstants.getScreenFrameRate();
+        this.VIDEO_WIDTH = MyDeviceConstants.getVideoWidth();
+        this.VIDEO_HEIGHT = MyDeviceConstants.getVideoHeight();
+//        this.SCREEN_FRAME_RATE = MyDeviceConstants.getScreenFrameRate();
     }
 
     public void startDecode(Surface surface) {
@@ -30,9 +30,11 @@ public class ScreenDecoder {
             mMediaCodec = MediaCodec.createDecoderByType(MediaFormat.MIMETYPE_VIDEO_HEVC);
             MediaFormat mediaFormat =
                     MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_HEVC, VIDEO_WIDTH, VIDEO_HEIGHT);
-            mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, VIDEO_WIDTH * VIDEO_HEIGHT);
-            mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, SCREEN_FRAME_RATE);
-            mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, SCREEN_FRAME_INTERVAL);
+//            mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 8192000);
+//            mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, SCREEN_FRAME_RATE);
+//            mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, SCREEN_FRAME_INTERVAL);
+//            mediaFormat.setInteger(MediaFormat.KEY_MAX_WIDTH,VIDEO_WIDTH);
+//            mediaFormat.setInteger(MediaFormat.KEY_MAX_HEIGHT,VIDEO_HEIGHT);
             mMediaCodec.configure(mediaFormat, surface, null, 0);
             mMediaCodec.start();
         } catch (IOException e) {

@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -13,7 +12,8 @@ import android.util.Log;
 import com.tcwg.wfdprojection.activity.BaseActivity;
 import com.tcwg.wfdprojection.activity.ReceiverActivity;
 import com.tcwg.wfdprojection.activity.SenderActivity;
-import com.tcwg.wfdprojection.constant.SenderConstants;
+import com.tcwg.wfdprojection.constant.MyDeviceConstants;
+import com.tcwg.wfdprojection.constant.P2pDeviceConstants;
 
 
 public class MainActivity extends BaseActivity {
@@ -28,7 +28,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         //获取屏幕参数
-     //   initConstant();
+        initConstant();
 
         //requestPermission
         findViewById(R.id.btnCheckPermission).setOnClickListener(v ->
@@ -69,9 +69,9 @@ public class MainActivity extends BaseActivity {
     //获取屏幕参数
     private  void initConstant(){
         Point point = new Point();
-        getWindowManager().getDefaultDisplay().getSize(point);
-        SenderConstants.setVideoHeight(point.y);
-        SenderConstants.setVideoWidth(point.x);
-        Log.e(TAG,"set Constant width "+SenderConstants.getVideoWidth()+" height "+SenderConstants.getVideoHeight()+" fps "+SenderConstants.getScreenFrameRate());
+        getWindowManager().getDefaultDisplay().getRealSize(point);
+        MyDeviceConstants.setVideoHeight(point.y);
+        MyDeviceConstants.setVideoWidth(point.x);
+        Log.e(TAG,"set Constant width "+ MyDeviceConstants.getVideoWidth()+" height "+ MyDeviceConstants.getVideoHeight()+" fps "+ MyDeviceConstants.getScreenFrameRate());
     }
 }

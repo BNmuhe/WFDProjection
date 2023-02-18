@@ -1,11 +1,8 @@
 package com.tcwg.wfdprojection.connection;
 
-import android.annotation.SuppressLint;
 import android.util.Log;
 
-import com.tcwg.wfdprojection.constant.ReceiverConstants;
-import com.tcwg.wfdprojection.constant.SenderConstants;
-import com.tcwg.wfdprojection.util.ScreenDecoder;
+import com.tcwg.wfdprojection.constant.MyDeviceConstants;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -36,8 +33,8 @@ public class SocketServer extends WebSocketServer {
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         Log.e(TAG, "onOpen");
         webSocket = conn;
-//        conn.send(SenderConstants.getVideoWidth()+":"+SenderConstants.getVideoHeight());
-//        Log.e(TAG,"send receiver constant "+SenderConstants.getVideoWidth()+" "+SenderConstants.getVideoHeight());
+        conn.send(MyDeviceConstants.getVideoWidth()+":"+MyDeviceConstants.getVideoHeight());
+        Log.e(TAG,"send my device constant "+MyDeviceConstants.getVideoWidth()+" "+MyDeviceConstants.getVideoHeight());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.tcwg.wfdprojection.manager;
 
+import android.util.Log;
 import android.view.Surface;
 
 import com.tcwg.wfdprojection.connection.SocketServer;
@@ -21,17 +22,23 @@ public class ReceiverSocketManager implements SocketServer.SocketCallback{
     public void start(Surface surface) {
 
 
-        screenDecoder = new ScreenDecoder();
-        screenDecoder.startDecode(surface);
+
 
         socketServer =new SocketServer(this,new InetSocketAddress(SOCKET_PORT));
         socketServer.start();
+        Log.e(TAG, "socketServer start");
+
+        screenDecoder = new ScreenDecoder();
+        screenDecoder.startDecode(surface);
 
     }
     public void close() {
         try {
+//            socketServer.close();
             socketServer.stop();
-            socketServer.close();
+
+
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

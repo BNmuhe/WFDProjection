@@ -8,6 +8,7 @@ import android.media.projection.MediaProjection;
 import android.util.Log;
 import android.view.Surface;
 
+import com.tcwg.wfdprojection.constant.SenderConstants;
 import com.tcwg.wfdprojection.manager.SenderSocketManager;
 
 import java.io.IOException;
@@ -17,11 +18,13 @@ public class ScreenEncoder extends Thread{
 
 
 
+
+
     public static final String TAG = ScreenEncoder.class.getSimpleName();
     //不同手机支持的编码最大分辨率不同
-    private static final int VIDEO_WIDTH = 1080;
-    private static final int VIDEO_HEIGHT = 1920;
-    private static final int SCREEN_FRAME_RATE = 60;
+    private final int VIDEO_WIDTH;
+    private final int VIDEO_HEIGHT;
+    private final int SCREEN_FRAME_RATE;
     private static final int SCREEN_FRAME_INTERVAL = 1;
     private static final long SOCKET_TIME_OUT = 10000;
     // I帧
@@ -43,6 +46,9 @@ public class ScreenEncoder extends Thread{
     public ScreenEncoder(MediaProjection mMediaProjection, SenderSocketManager mSenderSocketManager) {
         this.mediaProjection = mMediaProjection;
         this.senderSocketManager = mSenderSocketManager;
+        this.VIDEO_WIDTH = SenderConstants.getVideoWidth();
+        this.VIDEO_HEIGHT = SenderConstants.getVideoHeight();
+        this.SCREEN_FRAME_RATE = SenderConstants.getScreenFrameRate();
     }
 
     public void startEncode() {
@@ -99,7 +105,7 @@ public class ScreenEncoder extends Thread{
 
 
     private void encodeData(ByteBuffer byteBuffer, MediaCodec.BufferInfo bufferInfo){
-        Log.e(TAG, "encodeData");
+
         int offSet = 4;
         if (byteBuffer.get(2) == 0x01) {
             offSet = 3;
@@ -119,7 +125,7 @@ public class ScreenEncoder extends Thread{
         } else {
             byte[] bytes = new byte[bufferInfo.size];
             byteBuffer.get(bytes);
-            Log.e(TAG, "encoder2 start");
+
             senderSocketManager.sendData(bytes);
         }
     }

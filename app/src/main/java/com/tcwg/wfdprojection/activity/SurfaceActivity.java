@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.tcwg.wfdprojection.R;
 import com.tcwg.wfdprojection.manager.ReceiverSocketManager;
@@ -17,6 +19,11 @@ public class SurfaceActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_surface);
         SurfaceView surfaceView = findViewById(R.id.sv_screen);
         surfaceView
@@ -44,10 +51,11 @@ public class SurfaceActivity extends BaseActivity {
     }
 
     protected void onDestroy() {
+        super.onDestroy();
+
         if (receiverSocketManager != null) {
             receiverSocketManager.close();
         }
-        super.onDestroy();
     }
 
 

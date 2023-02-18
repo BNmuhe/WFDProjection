@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.media.projection.MediaProjectionManager;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -25,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tcwg.wfdprojection.R;
 import com.tcwg.wfdprojection.adapter.DeviceAdapter;
 import com.tcwg.wfdprojection.boardcast.DirectBroadcastReceiver;
+import com.tcwg.wfdprojection.constant.SenderConstants;
 import com.tcwg.wfdprojection.listener.DirectActionListener;
 import com.tcwg.wfdprojection.service.ScreenService;
 
@@ -40,7 +42,7 @@ public class SenderActivity extends BaseActivity {
 
     private TextView tv_myDeviceName;
     private Button btn_startSend;
-
+    private  Button btn_stopSend;
     private Button btn_disconnect;
 
     private Button btn_deviceDiscover;
@@ -54,6 +56,10 @@ public class SenderActivity extends BaseActivity {
     private DeviceAdapter deviceAdapter;
 
     private boolean wifiP2pEnabled = false;
+
+    private boolean isConnected;
+
+
 
     private List<WifiP2pDevice> wifiP2pDeviceList;
 
@@ -71,10 +77,13 @@ public class SenderActivity extends BaseActivity {
 
         @Override
         public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
-            wifiP2pDeviceList.clear();
-            deviceAdapter.notifyDataSetChanged();
+
+
             btn_disconnect.setEnabled(true);
+            btn_stopSend.setEnabled(false);
             btn_startSend.setEnabled(true);
+            btn_deviceDiscover.setEnabled(false);
+
             Log.e(TAG, "onConnectionInfoAvailable");
             Log.e(TAG, "onConnectionInfoAvailable groupFormed: " + wifiP2pInfo.groupFormed);
             Log.e(TAG, "onConnectionInfoAvailable isGroupOwner: " + wifiP2pInfo.isGroupOwner);
@@ -82,12 +91,16 @@ public class SenderActivity extends BaseActivity {
             if (wifiP2pInfo.groupFormed && !wifiP2pInfo.isGroupOwner) {
                 SenderActivity.this.wifiP2pInfo = wifiP2pInfo;
             }
+            wifiP2pDeviceList.clear();
+            deviceAdapter.notifyDataSetChanged();
         }
 
         @Override
         public void onDisconnection() {
             btn_disconnect.setEnabled(false);
             btn_startSend.setEnabled(false);
+            btn_stopSend.setEnabled(false);
+            btn_deviceDiscover.setEnabled(true);
             wifiP2pDeviceList.clear();
             wifiP2pInfo = null;
         }
@@ -121,11 +134,15 @@ public class SenderActivity extends BaseActivity {
         setContentView(R.layout.activity_sender);
         initView();
         initEvent();
+    //    initConstant();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(isConnected){
+            disconnect();
+        }
         unregisterReceiver(broadcastReceiver);
     }
 
@@ -153,74 +170,94 @@ public class SenderActivity extends BaseActivity {
         btn_disconnect = findViewById(R.id.btn_disconnect);
         btn_deviceDiscover = findViewById(R.id.btn_deviceDiscover);
         btn_startSend = findViewById(R.id.btn_startSend);
+        btn_stopSend = findViewById(R.id.btn_stopSend);
+        btn_stopSend.setEnabled(false);
         btn_disconnect.setEnabled(false);
         btn_startSend.setEnabled(false);
+        btn_deviceDiscover.setEnabled(true);
         RecyclerView rv_deviceList = findViewById(R.id.rv_deviceList);
         wifiP2pDeviceList = new ArrayList<>();
         deviceAdapter = new DeviceAdapter(wifiP2pDeviceList);
         deviceAdapter.setClickListener(position -> {
             mWifiP2pDevice = wifiP2pDeviceList.get(position);
-            showToast(mWifiP2pDevice.deviceName);
             connect();
         });
 
         rv_deviceList.setAdapter(deviceAdapter);
         rv_deviceList.setLayoutManager(new LinearLayoutManager(this));
 
-        btn_deviceDiscover.setOnClickListener(v -> {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                showToast("请先授予位置权限");
-            }
-            if (!wifiP2pEnabled) {
-                showToast("需要先打开Wifi");
-            }
-            wifiP2pDeviceList.clear();
-            deviceAdapter.notifyDataSetChanged();
-            wifiP2pManager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
-                @Override
-                public void onSuccess() {
-                    showToast("Success");
-                }
 
-                @Override
-                public void onFailure(int reasonCode) {
-                    showToast("Failure");
-                }
-            });
-
-        });
+        btn_deviceDiscover.setOnClickListener(v -> discoverDevice());
+        btn_stopSend.setOnClickListener(v -> stopSend());
         btn_disconnect.setOnClickListener(v -> disconnect());
-        btn_startSend.setOnClickListener(v -> {
-            try {
-                startProjection();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        btn_startSend.setOnClickListener(v -> startProjection());
     }
 
-    private void disconnect(){
-        btn_disconnect.setEnabled(false);
-        btn_startSend.setEnabled(false);
+    private  void initConstant(){
+        Point point = new Point();
+        getWindowManager().getDefaultDisplay().getSize(point);
+        SenderConstants.setVideoHeight(point.y);
+        SenderConstants.setVideoWidth(point.x);
+        Log.e(TAG,"set Constant width "+SenderConstants.getVideoWidth()+" height "+SenderConstants.getVideoHeight()+" fps "+SenderConstants.getScreenFrameRate());
+    }
+
+    private void stopSend(){
+        btn_disconnect.setEnabled(true);
+        btn_startSend.setEnabled(true);
+        btn_deviceDiscover.setEnabled(false);
+        btn_stopSend.setEnabled(false);
         Intent service = new Intent(this, ScreenService.class);
         stopService(service);
-        Log.e(TAG,"disconnect");
+        Log.e(TAG, "stopSend");
+    }
+
+    private void disconnect() {
+        btn_disconnect.setEnabled(false);
+        btn_startSend.setEnabled(false);
+        btn_deviceDiscover.setEnabled(true);
+        btn_stopSend.setEnabled(false);
+        Log.e(TAG, "disconnect");
+
         wifiP2pManager.removeGroup(channel, new WifiP2pManager.ActionListener() {
             @Override
             public void onFailure(int reasonCode) {
                 Log.e(TAG, "disconnect onFailure:" + reasonCode);
             }
+
             @Override
             public void onSuccess() {
+                isConnected = false;
                 Log.e(TAG, "disconnect onSuccess");
             }
         });
     }
 
-    private void startProjection() throws IOException {
+    private void startProjection() {
         Intent intent = mediaProjectionManager.createScreenCaptureIntent();
         startActivityForResult(intent, PROJECTION_REQUEST_CODE);
 
+    }
+
+    private void discoverDevice(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            showToast("请先授予位置权限");
+        }
+        if (!wifiP2pEnabled) {
+            showToast("需要先打开Wifi");
+        }
+        wifiP2pDeviceList.clear();
+        deviceAdapter.notifyDataSetChanged();
+        wifiP2pManager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                showToast("Success");
+            }
+
+            @Override
+            public void onFailure(int reasonCode) {
+                showToast("Failure");
+            }
+        });
     }
 
     @Override
@@ -235,17 +272,21 @@ public class SenderActivity extends BaseActivity {
             Intent service = new Intent(this, ScreenService.class);
             service.putExtra("code", resultCode);
             service.putExtra("data", data);
-            service.putExtra("IP",wifiP2pInfo);
+            service.putExtra("IP", wifiP2pInfo);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(service);
             } else {
                 startService(service);
             }
 
+            btn_stopSend.setEnabled(true);
+            btn_startSend.setEnabled(false);
+            btn_deviceDiscover.setEnabled(false);
+            btn_disconnect.setEnabled(false);
+
         }
 
     }
-
 
     private void connect() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -259,8 +300,9 @@ public class SenderActivity extends BaseActivity {
             wifiP2pManager.connect(channel, config, new WifiP2pManager.ActionListener() {
                 @Override
                 public void onSuccess() {
-                    Log.e(TAG, "connect onSuccess");
 
+                    Log.e(TAG, "connect onSuccess");
+                    isConnected = true;
                     showToast("连接成功 ");
 
                 }

@@ -1,6 +1,5 @@
 package com.tcwg.wfdprojection.service;
 
-import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -110,7 +109,9 @@ public class ScreenService extends Service {
         Log.e(TAG, "onDestroy");
 
        if (senderSocketManager!=null){
+
            senderSocketManager.close();
+           Log.e(TAG, "close sender socket");
            senderSocketManager=null;
        }
 

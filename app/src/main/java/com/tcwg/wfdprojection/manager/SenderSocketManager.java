@@ -21,11 +21,10 @@ public class SenderSocketManager {
     private ScreenEncoder mScreenEncoder;
 
     public SenderSocketManager(String IP) {
-
         this.IP=IP;
     }
     public void start(MediaProjection mediaProjection) {
-        mScreenEncoder = new ScreenEncoder(mediaProjection, this);
+
         try {
             // 需要修改为服务端的IP地址与端口
             URI uri = new URI("ws://"+IP+":" + SOCKET_PORT);
@@ -33,6 +32,7 @@ public class SenderSocketManager {
             socketClient = new SocketClient(uri);
             socketClient.connect();
             Log.e(TAG,"connect");
+            mScreenEncoder = new ScreenEncoder(mediaProjection, this);
             mScreenEncoder.startEncode();
 
         } catch (URISyntaxException e) {
@@ -48,11 +48,13 @@ public class SenderSocketManager {
 
 
     public void close() {
-        mScreenEncoder.stopEncode();
-        socketClient.close();
         if (mScreenEncoder != null) {
             mScreenEncoder.stopEncode();
+            mScreenEncoder = null;
+
         }
+        socketClient.close();
+
     }
 
 }

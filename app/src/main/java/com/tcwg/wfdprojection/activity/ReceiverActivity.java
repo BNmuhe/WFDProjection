@@ -29,6 +29,8 @@ public class ReceiverActivity extends BaseActivity{
 
     private boolean connectionInfoAvailable;
 
+    private boolean isGroupCreated;
+
     private BroadcastReceiver broadcastReceiver;
 
     private Button btn_createGroup;
@@ -104,13 +106,8 @@ public class ReceiverActivity extends BaseActivity{
         btn_removeGroup = findViewById(R.id.btn_removeGroup);
         btn_startListen = findViewById(R.id.btn_startListen);
         btn_removeGroup.setEnabled(false);
-
-        btn_startListen.setOnClickListener(v -> {
-
-
-            startActivity(SurfaceActivity.class);
-        });
-
+        btn_startListen.setEnabled(false);
+        btn_startListen.setOnClickListener(v -> startActivity(SurfaceActivity.class));
         btn_createGroup.setOnClickListener(v ->{
             if (ActivityCompat.checkSelfPermission(ReceiverActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
@@ -121,9 +118,10 @@ public class ReceiverActivity extends BaseActivity{
                     Log.e(TAG, "createGroup onSuccess");
                     btn_createGroup.setEnabled(false);
                     btn_removeGroup.setEnabled(true);
-
+                    btn_startListen.setEnabled(true);
+                    isGroupCreated =true;
+                    startActivity(SurfaceActivity.class);
                     showToast("onSuccess");
-
                 }
 
                 @Override
@@ -134,11 +132,7 @@ public class ReceiverActivity extends BaseActivity{
             });
         });
 
-        btn_removeGroup.setOnClickListener(v -> {
-
-
-            removeGroup();
-        });
+        btn_removeGroup.setOnClickListener(v -> removeGroup());
 
     }
 
@@ -153,20 +147,26 @@ public class ReceiverActivity extends BaseActivity{
 
 
     private void removeGroup() {
-        wifiP2pManager.removeGroup(channel, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-                Log.e(TAG, "removeGroup onSuccess");
-                btn_createGroup.setEnabled(true);
-                btn_removeGroup.setEnabled(false);
-                showToast("onSuccess");
-            }
 
-            @Override
-            public void onFailure(int reason) {
-                Log.e(TAG, "removeGroup onFailure");
-                showToast("onFailure");
-            }
-        });
+        if(isGroupCreated == true){
+            wifiP2pManager.removeGroup(channel, new WifiP2pManager.ActionListener() {
+                @Override
+                public void onSuccess() {
+                    Log.e(TAG, "removeGroup onSuccess");
+                    btn_createGroup.setEnabled(true);
+                    btn_removeGroup.setEnabled(false);
+                    btn_startListen.setEnabled(false);
+                    isGroupCreated = false;
+                    showToast("onSuccess");
+                }
+
+                @Override
+                public void onFailure(int reason) {
+                    Log.e(TAG, "removeGroup onFailure");
+                    showToast("onFailure");
+                }
+            });
+        }
+
     }
 }

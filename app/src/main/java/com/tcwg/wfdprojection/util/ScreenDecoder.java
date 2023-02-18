@@ -4,16 +4,25 @@ import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.view.Surface;
 
+import com.tcwg.wfdprojection.constant.ReceiverConstants;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class ScreenDecoder {
-    private static final int VIDEO_WIDTH = 1080;
-    private static final int VIDEO_HEIGHT = 1920;
+    private int VIDEO_WIDTH;
+    private int VIDEO_HEIGHT;
+    private int SCREEN_FRAME_RATE;
     private static final long DECODE_TIME_OUT = 10000;
-    private static final int SCREEN_FRAME_RATE = 60;
     private static final int SCREEN_FRAME_INTERVAL = 1;
     private MediaCodec mMediaCodec;
+
+    public ScreenDecoder() {
+
+        this.VIDEO_WIDTH = ReceiverConstants.getVideoWidth();
+        this.VIDEO_HEIGHT = ReceiverConstants.getVideoHeight();
+        this.SCREEN_FRAME_RATE = ReceiverConstants.getScreenFrameRate();
+    }
 
     public void startDecode(Surface surface) {
         try {

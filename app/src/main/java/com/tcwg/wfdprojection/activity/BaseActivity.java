@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class BaseActivity extends AppCompatActivity {
 
-
-
     protected void setTitle(String title) {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -22,7 +20,6 @@ public class BaseActivity extends AppCompatActivity {
     protected void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-
 
     protected <T extends Activity> void startActivity(Class<T> tClass) {
         startActivity(new Intent(this, tClass));

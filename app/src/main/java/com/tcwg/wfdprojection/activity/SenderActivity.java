@@ -58,7 +58,9 @@ public class SenderActivity extends BaseActivity {
 
     private boolean isConnected;
 
+    private boolean isSend;
 
+    private boolean isActivityOpened = false;
 
     private List<WifiP2pDevice> wifiP2pDeviceList;
 
@@ -76,13 +78,10 @@ public class SenderActivity extends BaseActivity {
 
         @Override
         public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
-
-
             btn_disconnect.setEnabled(true);
             btn_stopSend.setEnabled(false);
             btn_startSend.setEnabled(true);
             btn_deviceDiscover.setEnabled(false);
-
             Log.e(TAG, "onConnectionInfoAvailable");
             Log.e(TAG, "onConnectionInfoAvailable groupFormed: " + wifiP2pInfo.groupFormed);
             Log.e(TAG, "onConnectionInfoAvailable isGroupOwner: " + wifiP2pInfo.isGroupOwner);
@@ -100,6 +99,12 @@ public class SenderActivity extends BaseActivity {
             btn_startSend.setEnabled(false);
             btn_stopSend.setEnabled(false);
             btn_deviceDiscover.setEnabled(true);
+            Log.e(TAG, "onDisconnection");
+            if(isSend){
+                Intent service = new Intent(SenderActivity.this, ScreenService.class);
+                stopService(service);
+                Log.e(TAG, "stopSend");
+            }
             wifiP2pDeviceList.clear();
             wifiP2pInfo = null;
         }
@@ -131,18 +136,23 @@ public class SenderActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sender);
-        initView();
-        initEvent();
-    //    initConstant();
+        Log.e(TAG, "onCreate:"+isActivityOpened);
+        if(!isActivityOpened){
+            initView();
+            initEvent();
+            isActivityOpened = true;
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.e(TAG, "onDestroy");
         if(isConnected){
             disconnect();
         }
         unregisterReceiver(broadcastReceiver);
+        isActivityOpened=false;
     }
 
     private void initEvent() {
@@ -156,7 +166,6 @@ public class SenderActivity extends BaseActivity {
             finish();
             return;
         }
-
         channel = wifiP2pManager.initialize(this, getMainLooper(), directActionListener);
         broadcastReceiver = new DirectBroadcastReceiver(wifiP2pManager, channel, directActionListener);
         registerReceiver(broadcastReceiver, DirectBroadcastReceiver.getIntentFilter());
@@ -181,23 +190,12 @@ public class SenderActivity extends BaseActivity {
             mWifiP2pDevice = wifiP2pDeviceList.get(position);
             connect();
         });
-
         rv_deviceList.setAdapter(deviceAdapter);
         rv_deviceList.setLayoutManager(new LinearLayoutManager(this));
-
-
         btn_deviceDiscover.setOnClickListener(v -> discoverDevice());
         btn_stopSend.setOnClickListener(v -> stopSend());
         btn_disconnect.setOnClickListener(v -> disconnect());
         btn_startSend.setOnClickListener(v -> startProjection());
-    }
-
-    private  void initConstant(){
-        Point point = new Point();
-        getWindowManager().getDefaultDisplay().getSize(point);
-        P2pDeviceConstants.setVideoHeight(point.y);
-        P2pDeviceConstants.setVideoWidth(point.x);
-        Log.e(TAG,"set Constant width "+ P2pDeviceConstants.getVideoWidth()+" height "+ P2pDeviceConstants.getVideoHeight()+" fps "+ P2pDeviceConstants.getScreenFrameRate());
     }
 
     private void stopSend(){
@@ -208,6 +206,7 @@ public class SenderActivity extends BaseActivity {
         Intent service = new Intent(this, ScreenService.class);
         stopService(service);
         Log.e(TAG, "stopSend");
+        isSend = false;
     }
 
     private void disconnect() {
@@ -216,7 +215,6 @@ public class SenderActivity extends BaseActivity {
         btn_deviceDiscover.setEnabled(true);
         btn_stopSend.setEnabled(false);
         Log.e(TAG, "disconnect");
-
         wifiP2pManager.removeGroup(channel, new WifiP2pManager.ActionListener() {
             @Override
             public void onFailure(int reasonCode) {
@@ -234,7 +232,6 @@ public class SenderActivity extends BaseActivity {
     private void startProjection() {
         Intent intent = mediaProjectionManager.createScreenCaptureIntent();
         startActivityForResult(intent, PROJECTION_REQUEST_CODE);
-
     }
 
     private void discoverDevice(){
@@ -249,21 +246,21 @@ public class SenderActivity extends BaseActivity {
         wifiP2pManager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
-                showToast("Success");
+                showToast("onSuccess");
+                Log.e(TAG, "onSuccess");
             }
 
             @Override
             public void onFailure(int reasonCode) {
-                showToast("Failure");
+                showToast("onFailure:"+reasonCode);
+                Log.e(TAG, "onFailure:"+reasonCode);
             }
         });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-
         super.onActivityResult(requestCode, resultCode, data);
-
         if (resultCode != RESULT_OK) {
             return;
         }
@@ -277,13 +274,23 @@ public class SenderActivity extends BaseActivity {
             } else {
                 startService(service);
             }
-
             btn_stopSend.setEnabled(true);
             btn_startSend.setEnabled(false);
             btn_deviceDiscover.setEnabled(false);
             btn_disconnect.setEnabled(false);
-
+            isSend = true;
         }
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if(isConnected){
+            moveTaskToBack(true);
+        }else {
+            super.onBackPressed();
+        }
+
 
     }
 
@@ -299,11 +306,9 @@ public class SenderActivity extends BaseActivity {
             wifiP2pManager.connect(channel, config, new WifiP2pManager.ActionListener() {
                 @Override
                 public void onSuccess() {
-
                     Log.e(TAG, "connect onSuccess");
                     isConnected = true;
                     showToast("连接成功 ");
-
                 }
 
                 @Override

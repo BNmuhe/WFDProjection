@@ -3,7 +3,7 @@ package com.tcwg.wfdprojection.constant;
 public class MyDeviceConstants {
     private static Integer VIDEO_WIDTH = 1080;
     private static Integer VIDEO_HEIGHT = 1920;
-    private static Integer SCREEN_FRAME_RATE = 60;
+    private static Integer SCREEN_FRAME_RATE = 90;
 
     public static Integer getVideoWidth() {
         return VIDEO_WIDTH;

@@ -16,16 +16,12 @@ import java.nio.ByteBuffer;
 
 public class ScreenEncoder extends Thread{
 
-
-
-
-
     public static final String TAG = ScreenEncoder.class.getSimpleName();
     //不同手机支持的编码最大分辨率不同
     private final int VIDEO_WIDTH;
     private final int VIDEO_HEIGHT;
     private final int SCREEN_FRAME_RATE;
-    private static final int SCREEN_FRAME_INTERVAL = 1;
+    private static final int SCREEN_FRAME_INTERVAL = 3;
     private static final long SOCKET_TIME_OUT = 10000;
     // I帧
     private static final int TYPE_FRAME_INTERVAL = 19;
@@ -56,11 +52,12 @@ public class ScreenEncoder extends Thread{
                 MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_HEVC, VIDEO_WIDTH, VIDEO_HEIGHT);
         mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         // 比特率（比特/秒）
-        mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 4096000);
+        mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 8192000);
         // 帧率
         mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, SCREEN_FRAME_RATE);
         // I帧的频率
         mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, SCREEN_FRAME_INTERVAL);
+
         try {
             mMediaCodec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_HEVC);
             mMediaCodec.configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
@@ -136,6 +133,4 @@ public class ScreenEncoder extends Thread{
 
         Log.e(TAG, "encoder stop");
     }
-
-
 }

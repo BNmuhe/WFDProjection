@@ -23,10 +23,8 @@ public class SocketServer extends WebSocketServer {
     public SocketServer(SocketCallback socketCallback, InetSocketAddress inetSocketAddress) {
         super(inetSocketAddress);
         this.socketCallback = socketCallback;
+        this.setReuseAddr(true);
     }
-
-
-
 
 
     @Override
@@ -44,13 +42,6 @@ public class SocketServer extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-//        String[] constant = message.split(":");
-//        ReceiverConstants.setVideoHeight(Integer.parseInt(constant[0]));
-//        ReceiverConstants.setVideoWidth(Integer.parseInt(constant[1]));
-//        ReceiverConstants.setScreenFrameRate(Integer.parseInt(constant[2]));
-//        Log.e(TAG,"receive sender constant "+ReceiverConstants.getVideoWidth()+" height "+ReceiverConstants.getVideoHeight()+" fps "+ReceiverConstants.getScreenFrameRate());
-
-
     }
 
     @Override
@@ -72,16 +63,8 @@ public class SocketServer extends WebSocketServer {
         Log.e(TAG, "onStart");
     }
 
-    public void close() {
-        if(webSocket!=null&&!webSocket.isClosed()){
-
-            webSocket.close();
-        }
-    }
-
     public interface SocketCallback {
         void onReceiveData(byte[] data);
     }
-
 
 }

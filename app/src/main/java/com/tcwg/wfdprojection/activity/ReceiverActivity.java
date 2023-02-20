@@ -3,6 +3,8 @@ package com.tcwg.wfdprojection.activity;
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.graphics.Point;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -12,8 +14,10 @@ import android.widget.Button;
 
 import  com.tcwg.wfdprojection.R;
 import com.tcwg.wfdprojection.boardcast.DirectBroadcastReceiver;
+import com.tcwg.wfdprojection.constant.MyDeviceConstants;
 import com.tcwg.wfdprojection.listener.DirectActionListener;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
@@ -22,22 +26,14 @@ import java.util.Collection;
 public class ReceiverActivity extends BaseActivity{
 
     private static final String TAG = "ReceiverActivity";
-
     private WifiP2pManager wifiP2pManager;
-
     private WifiP2pManager.Channel channel;
-
     private boolean connectionInfoAvailable;
-
     private boolean isGroupCreated;
-
     private BroadcastReceiver broadcastReceiver;
-
     private Button btn_createGroup;
-
     private  Button btn_removeGroup;
     private  Button btn_startListen;
-
     private final DirectActionListener directActionListener = new DirectActionListener() {
         @Override
         public void wifiP2pEnabled(boolean enabled) {
@@ -100,6 +96,13 @@ public class ReceiverActivity extends BaseActivity{
         registerReceiver(broadcastReceiver, DirectBroadcastReceiver.getIntentFilter());
     }
 
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        initConstant();
+    }
+
     private void initView(){
         setTitle("接收方");
         btn_createGroup = findViewById(R.id.btn_createGroup);
@@ -112,6 +115,11 @@ public class ReceiverActivity extends BaseActivity{
             if (ActivityCompat.checkSelfPermission(ReceiverActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
+
+            //获取当前屏幕的高和宽
+            initConstant();
+
+
             wifiP2pManager.createGroup(channel, new WifiP2pManager.ActionListener() {
                 @Override
                 public void onSuccess() {
@@ -141,13 +149,9 @@ public class ReceiverActivity extends BaseActivity{
         super.onDestroy();
         removeGroup();
         unregisterReceiver(broadcastReceiver);
-
-
     }
 
-
     private void removeGroup() {
-
         if(isGroupCreated == true){
             wifiP2pManager.removeGroup(channel, new WifiP2pManager.ActionListener() {
                 @Override
@@ -167,6 +171,13 @@ public class ReceiverActivity extends BaseActivity{
                 }
             });
         }
+    }
 
+    private  void initConstant(){
+        Point point = new Point();
+        getWindowManager().getDefaultDisplay().getRealSize(point);
+        MyDeviceConstants.setVideoHeight(point.y);
+        MyDeviceConstants.setVideoWidth(point.x);
+        Log.e(TAG,"set Constant width "+ MyDeviceConstants.getVideoWidth()+" height "+ MyDeviceConstants.getVideoHeight()+" fps "+ MyDeviceConstants.getScreenFrameRate());
     }
 }

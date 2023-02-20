@@ -18,7 +18,6 @@ import com.tcwg.wfdprojection.constant.P2pDeviceConstants;
 
 public class MainActivity extends BaseActivity {
 
-
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int CODE_REQ_PERMISSIONS = 665;
 
@@ -26,10 +25,8 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         //获取屏幕参数
-        initConstant();
-
+//        initConstant();
         //requestPermission
         findViewById(R.id.btnCheckPermission).setOnClickListener(v ->
                 ActivityCompat.requestPermissions(MainActivity.this,
@@ -51,7 +48,6 @@ public class MainActivity extends BaseActivity {
                 startActivity(SenderActivity.class));
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -67,11 +63,11 @@ public class MainActivity extends BaseActivity {
     }
 
     //获取屏幕参数
-    private  void initConstant(){
-        Point point = new Point();
-        getWindowManager().getDefaultDisplay().getRealSize(point);
-        MyDeviceConstants.setVideoHeight(point.y);
-        MyDeviceConstants.setVideoWidth(point.x);
-        Log.e(TAG,"set Constant width "+ MyDeviceConstants.getVideoWidth()+" height "+ MyDeviceConstants.getVideoHeight()+" fps "+ MyDeviceConstants.getScreenFrameRate());
-    }
+//    private  void initConstant(){
+//        Point point = new Point();
+//        getWindowManager().getDefaultDisplay().getRealSize(point);
+//        MyDeviceConstants.setVideoHeight(point.y);
+//        MyDeviceConstants.setVideoWidth(point.x);
+//        Log.e(TAG,"set Constant width "+ MyDeviceConstants.getVideoWidth()+" height "+ MyDeviceConstants.getVideoHeight()+" fps "+ MyDeviceConstants.getScreenFrameRate());
+//    }
 }

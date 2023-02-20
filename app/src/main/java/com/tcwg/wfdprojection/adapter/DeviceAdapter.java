@@ -42,7 +42,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
     public void onBindViewHolder(@NonNull DeviceAdapter.ViewHolder holder, int position) {
         holder.tv_deviceName.setText(wifiP2pDeviceList.get(position).deviceName);
         holder.tv_deviceAddress.setText(wifiP2pDeviceList.get(position).deviceAddress);
-        holder.tv_deviceDetails.setText(WifiP2pUtils.getDeviceStatus(wifiP2pDeviceList.get(position).status));
+        holder.tv_deviceDetails.setText(getDeviceStatus(wifiP2pDeviceList.get(position).status));
         holder.itemView.setTag(position);
     }
 
@@ -54,6 +54,25 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
     public void setClickListener(OnClickListener clickListener) {
         this.clickListener = clickListener;
     }
+
+    public String getDeviceStatus(int deviceStatus) {
+        switch (deviceStatus) {
+            case WifiP2pDevice.AVAILABLE:
+                return "可用的";
+            case WifiP2pDevice.INVITED:
+                return "邀请中";
+            case WifiP2pDevice.CONNECTED:
+                return "已连接";
+            case WifiP2pDevice.FAILED:
+                return "失败的";
+            case WifiP2pDevice.UNAVAILABLE:
+                return "不可用的";
+            default:
+                return "未知";
+        }
+    }
+
+
 
     public interface OnClickListener {
 
@@ -76,4 +95,8 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
         }
 
     }
+
+
+
+
 }

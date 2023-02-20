@@ -1,9 +1,20 @@
 package com.tcwg.wfdprojection.constant;
 
 public class P2pDeviceConstants {
+
+    private static String IP_ADDRESS = "192.168.49.1";
     private static Integer VIDEO_WIDTH = 1080;
     private static Integer VIDEO_HEIGHT = 1920;
     private static Integer SCREEN_FRAME_RATE = 90;
+
+    public static String getIpAddress() {
+        return IP_ADDRESS;
+    }
+
+    public static void setIpAddress(String ipAddress) {
+        IP_ADDRESS = ipAddress;
+    }
+
 
     public static Integer getVideoWidth() {
         return VIDEO_WIDTH;

@@ -1,4 +1,4 @@
-package com.tcwg.wfdprojection.util;
+package com.tcwg.wfdprojection.codec;
 
 import android.hardware.display.DisplayManager;
 import android.media.MediaCodec;
@@ -91,6 +91,7 @@ public class ScreenEncoder extends Thread{
             }
         }
         if (mMediaCodec != null) {
+            mMediaCodec.stop();
             mMediaCodec.release();
 
         }
@@ -117,12 +118,12 @@ public class ScreenEncoder extends Thread{
             System.arraycopy(vps_pps_sps, 0, newBytes, 0, vps_pps_sps.length);
             System.arraycopy(bytes, 0, newBytes, vps_pps_sps.length, bytes.length);
 
-            senderSocketManager.sendData(newBytes);
+            senderSocketManager.sendScreenData(newBytes);
         } else {
             byte[] bytes = new byte[bufferInfo.size];
             byteBuffer.get(bytes);
 
-            senderSocketManager.sendData(bytes);
+            senderSocketManager.sendScreenData(bytes);
         }
     }
 

@@ -25,8 +25,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //获取屏幕参数
-//        initConstant();
+
         //requestPermission
         findViewById(R.id.btnCheckPermission).setOnClickListener(v ->
                 ActivityCompat.requestPermissions(MainActivity.this,
@@ -39,7 +38,8 @@ public class MainActivity extends BaseActivity {
                                 Manifest.permission.ACCESS_FINE_LOCATION,
                                 Manifest.permission.ACCESS_COARSE_LOCATION,
                                 Manifest.permission.FOREGROUND_SERVICE,
-                                Manifest.permission.INTERNET}, CODE_REQ_PERMISSIONS));
+                                Manifest.permission.INTERNET,
+                                Manifest.permission.RECORD_AUDIO}, CODE_REQ_PERMISSIONS));
 
         findViewById(R.id.btnReceiver).setOnClickListener(v ->
                 startActivity(ReceiverActivity.class));
@@ -61,13 +61,4 @@ public class MainActivity extends BaseActivity {
             showToast("已获得权限");
         }
     }
-
-    //获取屏幕参数
-//    private  void initConstant(){
-//        Point point = new Point();
-//        getWindowManager().getDefaultDisplay().getRealSize(point);
-//        MyDeviceConstants.setVideoHeight(point.y);
-//        MyDeviceConstants.setVideoWidth(point.x);
-//        Log.e(TAG,"set Constant width "+ MyDeviceConstants.getVideoWidth()+" height "+ MyDeviceConstants.getVideoHeight()+" fps "+ MyDeviceConstants.getScreenFrameRate());
-//    }
 }

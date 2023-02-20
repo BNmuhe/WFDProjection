@@ -1,4 +1,4 @@
-package com.tcwg.wfdprojection.util;
+package com.tcwg.wfdprojection.codec;
 
 import android.media.MediaCodec;
 import android.media.MediaFormat;

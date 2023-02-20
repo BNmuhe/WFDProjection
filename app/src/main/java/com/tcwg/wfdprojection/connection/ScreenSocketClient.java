@@ -1,25 +1,22 @@
 package com.tcwg.wfdprojection.connection;
 
-import android.content.Intent;
 import android.util.Log;
 
-import com.tcwg.wfdprojection.activity.SenderActivity;
 import com.tcwg.wfdprojection.constant.P2pDeviceConstants;
 import com.tcwg.wfdprojection.manager.SenderSocketManager;
-import com.tcwg.wfdprojection.service.ScreenService;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 
-public class SocketClient extends WebSocketClient {
+public class ScreenSocketClient extends WebSocketClient {
 
-    private final String TAG = SocketClient.class.getSimpleName();
+    private final String TAG = ScreenSocketClient.class.getSimpleName();
 
     private final SenderSocketManager senderSocketManager;
 
-    public SocketClient(URI serverUri,SenderSocketManager senderSocketManager) {
+    public ScreenSocketClient(URI serverUri, SenderSocketManager senderSocketManager) {
         super(serverUri);
         this.senderSocketManager = senderSocketManager;
     }
@@ -35,7 +32,7 @@ public class SocketClient extends WebSocketClient {
         P2pDeviceConstants.setVideoWidth(Integer.parseInt(constant[0]));
         P2pDeviceConstants.setVideoHeight(Integer.parseInt(constant[1]));
         Log.e(TAG,"receive p2p device constant "+P2pDeviceConstants.getVideoWidth()+" "+P2pDeviceConstants.getVideoHeight());
-        senderSocketManager.startEncode();
+        senderSocketManager.startScreenEncode();
     }
 
     @Override

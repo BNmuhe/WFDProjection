@@ -2,25 +2,20 @@ package com.tcwg.wfdprojection.connection;
 
 import android.util.Log;
 
-import com.tcwg.wfdprojection.constant.MyDeviceConstants;
-
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
-public class SocketServer extends WebSocketServer {
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 
-    public static final String TAG = SocketServer.class.getSimpleName();
+public class AudioSocketServer extends WebSocketServer {
+
+    public static final String TAG = AudioSocketServer.class.getSimpleName();
     private SocketCallback socketCallback;
 
 
-
-    private WebSocket webSocket;
-
-    public SocketServer(SocketCallback socketCallback, InetSocketAddress inetSocketAddress) {
+    public AudioSocketServer(SocketCallback socketCallback , InetSocketAddress inetSocketAddress){
         super(inetSocketAddress);
         this.socketCallback = socketCallback;
         this.setReuseAddr(true);
@@ -30,9 +25,6 @@ public class SocketServer extends WebSocketServer {
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         Log.e(TAG, "onOpen");
-        webSocket = conn;
-        conn.send(MyDeviceConstants.getVideoWidth()+":"+MyDeviceConstants.getVideoHeight());
-        Log.e(TAG,"send my device constant "+MyDeviceConstants.getVideoWidth()+" "+MyDeviceConstants.getVideoHeight());
     }
 
     @Override
@@ -42,16 +34,19 @@ public class SocketServer extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String message) {
+
     }
 
-    @Override
+
     public void onMessage(WebSocket conn, ByteBuffer bytes) {
         byte[] buf = new byte[bytes.remaining()];
         bytes.get(buf);
+
         if (socketCallback != null) {
-            socketCallback.onReceiveData(buf);
+            socketCallback.onReceiveAudioData(buf);
         }
     }
+
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
@@ -64,7 +59,7 @@ public class SocketServer extends WebSocketServer {
     }
 
     public interface SocketCallback {
-        void onReceiveData(byte[] data);
+        void onReceiveAudioData(byte[] data);
     }
 
 }

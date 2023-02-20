@@ -60,7 +60,7 @@ public class SenderActivity extends BaseActivity {
 
     private boolean isSend;
 
-    private boolean isActivityOpened = false;
+
 
     private List<WifiP2pDevice> wifiP2pDeviceList;
 
@@ -88,6 +88,7 @@ public class SenderActivity extends BaseActivity {
             Log.e(TAG, "onConnectionInfoAvailable getHostAddress: " + wifiP2pInfo.groupOwnerAddress.getHostAddress());
             if (wifiP2pInfo.groupFormed && !wifiP2pInfo.isGroupOwner) {
                 SenderActivity.this.wifiP2pInfo = wifiP2pInfo;
+                P2pDeviceConstants.setIpAddress(wifiP2pInfo.groupOwnerAddress.getHostAddress());
             }
             wifiP2pDeviceList.clear();
             deviceAdapter.notifyDataSetChanged();
@@ -136,12 +137,12 @@ public class SenderActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sender);
-        Log.e(TAG, "onCreate:"+isActivityOpened);
-        if(!isActivityOpened){
-            initView();
-            initEvent();
-            isActivityOpened = true;
-        }
+
+
+        initView();
+        initEvent();
+
+
     }
 
     @Override
@@ -152,7 +153,7 @@ public class SenderActivity extends BaseActivity {
             disconnect();
         }
         unregisterReceiver(broadcastReceiver);
-        isActivityOpened=false;
+
     }
 
     private void initEvent() {
@@ -198,6 +199,61 @@ public class SenderActivity extends BaseActivity {
         btn_startSend.setOnClickListener(v -> startProjection());
     }
 
+    private void discoverDevice(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            showToast("请先授予位置权限");
+        }
+        if (!wifiP2pEnabled) {
+            showToast("需要先打开Wifi");
+        }
+        wifiP2pDeviceList.clear();
+        deviceAdapter.notifyDataSetChanged();
+        wifiP2pManager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                showToast("onSuccess");
+                Log.e(TAG, "onSuccess");
+            }
+
+            @Override
+            public void onFailure(int reasonCode) {
+                showToast("onFailure:"+reasonCode);
+                Log.e(TAG, "onFailure:"+reasonCode);
+            }
+        });
+    }
+
+    private void connect() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            showToast("请先授予位置权限");
+            return;
+        }
+        WifiP2pConfig config = new WifiP2pConfig();
+        if (config.deviceAddress != null && mWifiP2pDevice != null) {
+            config.deviceAddress = mWifiP2pDevice.deviceAddress;
+            Log.e(TAG, "connect:" + config.deviceAddress);
+            config.wps.setup = WpsInfo.PBC;
+            wifiP2pManager.connect(channel, config, new WifiP2pManager.ActionListener() {
+                @Override
+                public void onSuccess() {
+                    Log.e(TAG, "connect onSuccess");
+                    isConnected = true;
+                    showToast("连接成功 ");
+                }
+
+                @Override
+                public void onFailure(int reason) {
+                    showToast("连接失败 " + reason);
+                }
+            });
+        }
+    }
+
+    private void startProjection() {
+        Intent intent = mediaProjectionManager.createScreenCaptureIntent();
+        startActivityForResult(intent, PROJECTION_REQUEST_CODE);
+    }
+
     private void stopSend(){
         btn_disconnect.setEnabled(true);
         btn_startSend.setEnabled(true);
@@ -229,35 +285,6 @@ public class SenderActivity extends BaseActivity {
         });
     }
 
-    private void startProjection() {
-        Intent intent = mediaProjectionManager.createScreenCaptureIntent();
-        startActivityForResult(intent, PROJECTION_REQUEST_CODE);
-    }
-
-    private void discoverDevice(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            showToast("请先授予位置权限");
-        }
-        if (!wifiP2pEnabled) {
-            showToast("需要先打开Wifi");
-        }
-        wifiP2pDeviceList.clear();
-        deviceAdapter.notifyDataSetChanged();
-        wifiP2pManager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-                showToast("onSuccess");
-                Log.e(TAG, "onSuccess");
-            }
-
-            @Override
-            public void onFailure(int reasonCode) {
-                showToast("onFailure:"+reasonCode);
-                Log.e(TAG, "onFailure:"+reasonCode);
-            }
-        });
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -282,7 +309,6 @@ public class SenderActivity extends BaseActivity {
         }
     }
 
-
     @Override
     public void onBackPressed() {
         if(isConnected){
@@ -294,29 +320,6 @@ public class SenderActivity extends BaseActivity {
 
     }
 
-    private void connect() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            showToast("请先授予位置权限");
-            return;
-        }
-        WifiP2pConfig config = new WifiP2pConfig();
-        if (config.deviceAddress != null && mWifiP2pDevice != null) {
-            config.deviceAddress = mWifiP2pDevice.deviceAddress;
-            config.wps.setup = WpsInfo.PBC;
-            wifiP2pManager.connect(channel, config, new WifiP2pManager.ActionListener() {
-                @Override
-                public void onSuccess() {
-                    Log.e(TAG, "connect onSuccess");
-                    isConnected = true;
-                    showToast("连接成功 ");
-                }
 
-                @Override
-                public void onFailure(int reason) {
-                    showToast("连接失败 " + reason);
-                }
-            });
-        }
-    }
 
 }

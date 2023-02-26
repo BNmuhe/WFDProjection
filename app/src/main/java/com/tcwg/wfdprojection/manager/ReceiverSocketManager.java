@@ -5,18 +5,22 @@ import android.view.Surface;
 
 import com.tcwg.wfdprojection.codec.AudioDecoder;
 import com.tcwg.wfdprojection.connection.AudioSocketServer;
+import com.tcwg.wfdprojection.connection.ControlSocketServer;
 import com.tcwg.wfdprojection.connection.ScreenSocketServer;
 import com.tcwg.wfdprojection.codec.ScreenDecoder;
 
 import java.net.InetSocketAddress;
 
-public class ReceiverSocketManager implements ScreenSocketServer.SocketCallback, AudioSocketServer.SocketCallback {
+public class ReceiverSocketManager implements ScreenSocketServer.SocketCallback, AudioSocketServer.SocketCallback{
 
 
     public static final String TAG = ReceiverSocketManager.class.getSimpleName();
     private static final int SOCKET_SCREEN_PORT = 50000;
     private static final int SOCKET_AUDIO_PORT = 50001;
+    private static final int SOCKET_CONTROL_PORT = 50002;
     private ScreenSocketServer screenSocketServer;
+
+    private ControlSocketServer controlSocketServer;
 
     private ScreenDecoder screenDecoder;
 
@@ -28,6 +32,14 @@ public class ReceiverSocketManager implements ScreenSocketServer.SocketCallback,
     public void start(Surface surface) {
         startAudioRecode();
         startProjection(surface);
+        startControl();
+    }
+
+
+    private void startControl() {
+        controlSocketServer = new ControlSocketServer(new InetSocketAddress(SOCKET_CONTROL_PORT));
+        controlSocketServer.start();
+        Log.e(TAG, "startControl start");
     }
 
     public void startAudioRecode(){
@@ -57,6 +69,10 @@ public class ReceiverSocketManager implements ScreenSocketServer.SocketCallback,
                 audioSocketServer.stop();
                 Log.e(TAG, "audioSocketServer.stop");
             }
+            if(controlSocketServer!=null){
+                controlSocketServer.stop();
+                Log.e(TAG, "controlSocketServer.stop");
+            }
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -84,4 +100,9 @@ public class ReceiverSocketManager implements ScreenSocketServer.SocketCallback,
             audioDecoder.decode(data);
         }
     }
+
+    public void sendControlData(String command)  {
+        controlSocketServer.sendData(command);
+    }
+
 }

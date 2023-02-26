@@ -14,10 +14,17 @@ import java.nio.ByteBuffer;
 public class AudioDecoder {
 
     public static final String TAG = AudioDecoder.class.getSimpleName();
+
+    //解码器
     private MediaCodec mediaCodec;
+
+    //解码器的bufferInfo
     private MediaCodec.BufferInfo bufferInfo;
+
+    //用于播放解码后的音频流
     private AudioTrack audioTrack;
 
+    //采样率
     private static final int SAMPLE_RATE = 44100;
 
 

@@ -9,7 +9,6 @@ import android.util.Log;
 import com.tcwg.wfdprojection.manager.SenderSocketManager;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 public class AudioEncoder extends Thread{
 
@@ -29,7 +28,7 @@ public class AudioEncoder extends Thread{
     private SenderSocketManager senderSocketManager;
     private static  int bufferSize;
 
-    public AudioEncoder(AudioRecord audioRecord,SenderSocketManager senderSocketManager){
+    public AudioEncoder(AudioRecord audioRecord, SenderSocketManager senderSocketManager){
         this.audioRecord=audioRecord;
         this.senderSocketManager = senderSocketManager;
     }

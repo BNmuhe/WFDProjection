@@ -5,14 +5,12 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Point;
 import android.media.projection.MediaProjectionManager;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -82,6 +80,7 @@ public class SenderActivity extends BaseActivity {
             btn_stopSend.setEnabled(false);
             btn_startSend.setEnabled(true);
             btn_deviceDiscover.setEnabled(false);
+            isConnected = true;
             Log.e(TAG, "onConnectionInfoAvailable");
             Log.e(TAG, "onConnectionInfoAvailable groupFormed: " + wifiP2pInfo.groupFormed);
             Log.e(TAG, "onConnectionInfoAvailable isGroupOwner: " + wifiP2pInfo.isGroupOwner);
@@ -124,6 +123,7 @@ public class SenderActivity extends BaseActivity {
             Log.e(TAG, "onPeersAvailable : " + wifiP2pDeviceList.size());
             SenderActivity.this.wifiP2pDeviceList.clear();
             SenderActivity.this.wifiP2pDeviceList.addAll(wifiP2pDeviceList);
+
             deviceAdapter.notifyDataSetChanged();
         }
 
@@ -237,7 +237,7 @@ public class SenderActivity extends BaseActivity {
                 @Override
                 public void onSuccess() {
                     Log.e(TAG, "connect onSuccess");
-                    isConnected = true;
+
                     showToast("连接成功 ");
                 }
 
@@ -296,11 +296,7 @@ public class SenderActivity extends BaseActivity {
             service.putExtra("code", resultCode);
             service.putExtra("data", data);
             service.putExtra("IP", wifiP2pInfo);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(service);
-            } else {
-                startService(service);
-            }
+            startForegroundService(service);
             btn_stopSend.setEnabled(true);
             btn_startSend.setEnabled(false);
             btn_deviceDiscover.setEnabled(false);

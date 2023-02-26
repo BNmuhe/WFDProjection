@@ -14,7 +14,6 @@ import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioPlaybackCaptureConfiguration;
 import android.media.AudioRecord;
-import android.media.MediaRecorder;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.net.wifi.p2p.WifiP2pInfo;
@@ -84,6 +83,7 @@ public class ScreenService extends Service {
 
         //是否支持AudioPlaybackCapture
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            //支持AudioPlaybackCapture,将开启视频和音频传输服务
             AudioPlaybackCaptureConfiguration.Builder builder;
             builder = new AudioPlaybackCaptureConfiguration.Builder(mediaProjection);
             builder.addMatchingUsage(AudioAttributes.USAGE_MEDIA);//多媒体
@@ -124,14 +124,15 @@ public class ScreenService extends Service {
 
             Log.e(TAG, "project and audioRecord start");
             // 初始化发送端，包括视频和音频socket
-            senderSocketManager = new SenderSocketManager(wifiP2pInfo.groupOwnerAddress.getHostAddress(), mediaProjection,audioRecord);
+            senderSocketManager = new SenderSocketManager(wifiP2pInfo.groupOwnerAddress.getHostAddress(), mediaProjection,audioRecord,true);
 
 
         }else {
+            //不支持AudioPlaybackCapture,将仅开启视频传输服务
             if (mediaProjection == null) {
                 return;
             }
-            Log.e(TAG, "project and audioRecord start");
+            Log.e(TAG, "project start");
             // 初始化发送端，包括视频socket
             senderSocketManager = new SenderSocketManager(wifiP2pInfo.groupOwnerAddress.getHostAddress(), mediaProjection);
         }

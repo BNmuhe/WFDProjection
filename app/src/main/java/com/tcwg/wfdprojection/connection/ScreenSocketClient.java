@@ -45,6 +45,14 @@ public class ScreenSocketClient extends WebSocketClient {
         Log.e(TAG, "onError:"+ex);
     }
 
+
+
+    public interface SocketCallback {
+        void onScreenSocketConnection();
+
+    }
+
+
     public void sendData(byte[] bytes) {
 
         if (this.isOpen()) {

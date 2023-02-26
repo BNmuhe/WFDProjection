@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tcwg.wfdprojection.R;
-import com.tcwg.wfdprojection.util.WifiP2pUtils;
 
 import java.util.List;
 

@@ -21,15 +21,15 @@ import java.util.List;
 public class DirectBroadcastReceiver extends BroadcastReceiver {
 
     private static final String TAG = "DirectBroadcastReceiver";
-    private final WifiP2pManager mWifiP2pManager;
-    private final WifiP2pManager.Channel mChannel;
-    private final DirectActionListener mDirectActionListener;
+    private final WifiP2pManager wifiP2pManager;
+    private final WifiP2pManager.Channel channel;
+    private final DirectActionListener directActionListener;
 
     //构造
     public DirectBroadcastReceiver(WifiP2pManager wifiP2pManager, WifiP2pManager.Channel channel, DirectActionListener directActionListener) {
-        mWifiP2pManager = wifiP2pManager;
-        mChannel = channel;
-        mDirectActionListener = directActionListener;
+        this.wifiP2pManager = wifiP2pManager;
+        this.channel = channel;
+        this.directActionListener = directActionListener;
     }
 
     //添加广播
@@ -48,42 +48,42 @@ public class DirectBroadcastReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         if (action != null) {
             switch (action) {
-                // 用于指示 Wifi P2P 是否可用
+                //WifiP2P是否可用
                 case WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION: {
                     int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -100);
                     if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
-                        mDirectActionListener.wifiP2pEnabled(true);
+                        directActionListener.wifiP2pEnabled(true);
                     } else {
-                        mDirectActionListener.wifiP2pEnabled(false);
+                        directActionListener.wifiP2pEnabled(false);
                         List<WifiP2pDevice> wifiP2pDeviceList = new ArrayList<>();
-                        mDirectActionListener.onPeersAvailable(wifiP2pDeviceList);
+                        directActionListener.onPeersAvailable(wifiP2pDeviceList);
                     }
                     break;
                 }
-                // 对等节点列表发生了变化
+                //对等设备列表变化
                 case WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION: {
                     if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         return;
                     }
-                    mWifiP2pManager.requestPeers(mChannel, peers -> mDirectActionListener.onPeersAvailable(peers.getDeviceList()));
+                    wifiP2pManager.requestPeers(channel, peers -> directActionListener.onPeersAvailable(peers.getDeviceList()));
                     break;
                 }
-                // Wifi P2P 的连接状态发生了改变
+                //WifiP2P连接状态改变
                 case WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION: {
                     NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
                     if (networkInfo != null && networkInfo.isConnected()) {
-                        mWifiP2pManager.requestConnectionInfo(mChannel, info -> mDirectActionListener.onConnectionInfoAvailable(info));
-                        Log.e(TAG, "已连接p2p设备");
+                        wifiP2pManager.requestConnectionInfo(channel, info -> directActionListener.onConnectionInfoAvailable(info));
+                        Log.e(TAG, "connect to p2p device");
                     } else {
-                        mDirectActionListener.onDisconnection();
-                        Log.e(TAG, "与p2p设备已断开连接");
+                        directActionListener.onDisconnection();
+                        Log.e(TAG, "disconnect to p2p device");
                     }
                     break;
                 }
-                //本设备的设备信息发生了变化
+                //本设备信息变化
                 case WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION: {
                     WifiP2pDevice wifiP2pDevice = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
-                    mDirectActionListener.onSelfDeviceAvailable(wifiP2pDevice);
+                    directActionListener.onSelfDeviceAvailable(wifiP2pDevice);
                     break;
                 }
             }

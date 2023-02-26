@@ -1,32 +1,26 @@
 package com.tcwg.wfdprojection.connection;
 
-import android.util.Log;
-
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
-
 import java.net.URI;
 
-public class AudioSocketClient extends WebSocketClient {
+public class ControlSocketClient extends WebSocketClient {
 
     SocketCallback socketCallback;
-
-    public static final String TAG = AudioSocketClient.class.getSimpleName();
-    public AudioSocketClient(SocketCallback socketCallback, URI serverUri) {
+    public ControlSocketClient(SocketCallback socketCallback,URI serverUri) {
         super(serverUri);
         this.socketCallback = socketCallback;
     }
 
     @Override
-    public void onOpen(ServerHandshake handshakeData) {
-        socketCallback.onAudioSocketConnection();
-        Log.e(TAG, "onOpen");
+    public void onOpen(ServerHandshake handshake) {
+
     }
 
     @Override
     public void onMessage(String message) {
-
+        socketCallback.onReceiveAudioData(message);
     }
 
     @Override
@@ -39,17 +33,17 @@ public class AudioSocketClient extends WebSocketClient {
 
     }
 
-
     public interface SocketCallback {
-        void onAudioSocketConnection();
+
+
+        void onReceiveAudioData(String command);
 
     }
 
-    public void sendData(byte[] bytes) {
-
+    public void sendData(String s){
         if (this.isOpen()) {
             // 通过WebSocket 发送数据
-            this.send(bytes);
+            this.send(s);
         }
     }
 

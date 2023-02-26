@@ -1,19 +1,16 @@
 package com.tcwg.wfdprojection;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.Button;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import com.tcwg.wfdprojection.activity.BaseActivity;
 import com.tcwg.wfdprojection.activity.ReceiverActivity;
 import com.tcwg.wfdprojection.activity.SenderActivity;
-import com.tcwg.wfdprojection.constant.MyDeviceConstants;
-import com.tcwg.wfdprojection.constant.P2pDeviceConstants;
 
 
 public class MainActivity extends BaseActivity {
@@ -21,31 +18,51 @@ public class MainActivity extends BaseActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int CODE_REQ_PERMISSIONS = 665;
 
+    private Button btnCheckPermission;
+    private Button btnReceiver;
+    private Button btnSender;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //requestPermission
-        findViewById(R.id.btnCheckPermission).setOnClickListener(v ->
-                ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.CHANGE_NETWORK_STATE,
-                                Manifest.permission.ACCESS_NETWORK_STATE,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.READ_EXTERNAL_STORAGE,
-                                Manifest.permission.ACCESS_WIFI_STATE,
-                                Manifest.permission.CHANGE_WIFI_STATE,
-                                Manifest.permission.ACCESS_FINE_LOCATION,
-                                Manifest.permission.ACCESS_COARSE_LOCATION,
-                                Manifest.permission.FOREGROUND_SERVICE,
-                                Manifest.permission.INTERNET,
-                                Manifest.permission.RECORD_AUDIO}, CODE_REQ_PERMISSIONS));
 
-        findViewById(R.id.btnReceiver).setOnClickListener(v ->
+        btnCheckPermission=findViewById(R.id.btnCheckPermission);
+        btnReceiver= findViewById(R.id.btnReceiver);
+        btnSender= findViewById(R.id.btnSender);
+
+        btnCheckPermission.setEnabled(true);
+        btnSender.setEnabled(false);
+        btnReceiver.setEnabled(false);
+
+        checkPermission();
+
+
+        //requestPermission
+        btnCheckPermission.setOnClickListener(v ->checkPermission());
+
+        btnReceiver.setOnClickListener(v ->
                 startActivity(ReceiverActivity.class));
 
-        findViewById(R.id.btnSender).setOnClickListener(v ->
+        btnSender.setOnClickListener(v ->
                 startActivity(SenderActivity.class));
+    }
+
+
+    private void checkPermission(){
+        ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{Manifest.permission.CHANGE_NETWORK_STATE,
+                        Manifest.permission.ACCESS_NETWORK_STATE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.ACCESS_WIFI_STATE,
+                        Manifest.permission.CHANGE_WIFI_STATE,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.FOREGROUND_SERVICE,
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.RECORD_AUDIO}, CODE_REQ_PERMISSIONS);
     }
 
     @Override
@@ -59,6 +76,8 @@ public class MainActivity extends BaseActivity {
                 }
             }
             showToast("已获得权限");
+            btnSender.setEnabled(true);
+            btnReceiver.setEnabled(true);
         }
     }
 }

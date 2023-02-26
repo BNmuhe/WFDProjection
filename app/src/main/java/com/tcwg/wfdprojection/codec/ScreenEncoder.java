@@ -117,7 +117,7 @@ public class ScreenEncoder extends Thread{
             byte[] newBytes = new byte[vps_pps_sps.length + bytes.length];
             System.arraycopy(vps_pps_sps, 0, newBytes, 0, vps_pps_sps.length);
             System.arraycopy(bytes, 0, newBytes, vps_pps_sps.length, bytes.length);
-
+            Log.e(TAG, "I frame");
             senderSocketManager.sendScreenData(newBytes);
         } else {
             byte[] bytes = new byte[bufferInfo.size];

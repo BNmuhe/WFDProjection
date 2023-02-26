@@ -14,7 +14,7 @@ import org.java_websocket.server.WebSocketServer;
 public class ScreenSocketServer extends WebSocketServer {
 
     public static final String TAG = ScreenSocketServer.class.getSimpleName();
-    private SocketCallback socketCallback;
+    private final SocketCallback socketCallback;
 
 
 

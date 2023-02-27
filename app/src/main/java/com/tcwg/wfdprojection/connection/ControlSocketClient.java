@@ -1,11 +1,15 @@
 package com.tcwg.wfdprojection.connection;
 
+import android.util.Log;
+
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 
 public class ControlSocketClient extends WebSocketClient {
+
+    public static final String TAG = ControlSocketClient.class.getSimpleName();
 
     SocketCallback socketCallback;
     public ControlSocketClient(SocketCallback socketCallback,URI serverUri) {
@@ -15,12 +19,13 @@ public class ControlSocketClient extends WebSocketClient {
 
     @Override
     public void onOpen(ServerHandshake handshake) {
-
+        Log.e(TAG, "onOpen");
     }
 
     @Override
     public void onMessage(String message) {
-        socketCallback.onReceiveAudioData(message);
+        Log.e(TAG, "onMessage");
+        socketCallback.onReceiveCommand(message);
     }
 
     @Override
@@ -35,8 +40,7 @@ public class ControlSocketClient extends WebSocketClient {
 
     public interface SocketCallback {
 
-
-        void onReceiveAudioData(String command);
+        void onReceiveCommand(String command);
 
     }
 

@@ -4,47 +4,70 @@ import android.media.AudioRecord;
 import android.media.projection.MediaProjection;
 import android.util.Log;
 
+import com.tcwg.wfdprojection.Command;
 import com.tcwg.wfdprojection.codec.AudioEncoder;
 import com.tcwg.wfdprojection.connection.AudioSocketClient;
 import com.tcwg.wfdprojection.connection.ControlSocketClient;
 import com.tcwg.wfdprojection.connection.ScreenSocketClient;
 import com.tcwg.wfdprojection.codec.ScreenEncoder;
+import com.tcwg.wfdprojection.service.ControlService;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 public class SenderSocketManager implements AudioSocketClient.SocketCallback,ScreenSocketClient.SocketCallback, ControlSocketClient.SocketCallback {
 
+
+    private static SenderSocketManager senderSocketManager = new SenderSocketManager();
+
     public static final String TAG = SenderSocketManager.class.getSimpleName();
     private static final int SOCKET_SCREEN_PORT = 50000;
     private static final int SOCKET_AUDIO_PORT = 50001;
     private static final int SOCKET_CONTROL_PORT = 50002;
-    private final String IP;
+    private String IP;
     private ScreenSocketClient screenSocketClient;
     private AudioSocketClient audioSocketClient;
 
     private ControlSocketClient controlSocketClient;
     private ScreenEncoder screenEncoder;
     private AudioEncoder audioEncoder;
-    private final MediaProjection mediaProjection;
-    private final AudioRecord audioRecord;
+    private MediaProjection mediaProjection;
+    private AudioRecord audioRecord;
+
+    private ControlService controlService;
 
     private boolean isControlled;
 
-    public SenderSocketManager(String IP, MediaProjection mediaProjection) {
+    private SenderSocketManager(){
+        this.audioRecord = null;
+        this.mediaProjection = null;
+        this.isControlled = false;
+        this.IP=null;
+    }
+
+    public static SenderSocketManager getInstance(){
+        return senderSocketManager;
+    }
+
+
+    public void setControlService(ControlService controlService) {
+        this.controlService = controlService;
+    }
+
+    public void initSenderSocketManager(String IP, MediaProjection mediaProjection) {
         this.IP=IP;
         this.mediaProjection = mediaProjection;
         this.isControlled = false;
         this.audioRecord = null;
     }
-    public SenderSocketManager(String IP, MediaProjection mediaProjection, AudioRecord audioRecord) {
+    public void initSenderSocketManager(String IP, MediaProjection mediaProjection, AudioRecord audioRecord) {
         this.IP=IP;
         this.mediaProjection = mediaProjection;
         this.audioRecord =audioRecord;
         this.isControlled = false;
     }
 
-    public SenderSocketManager(String IP, MediaProjection mediaProjection, AudioRecord audioRecord, boolean isControlled) {
+    public void initSenderSocketManager(String IP, MediaProjection mediaProjection, AudioRecord audioRecord, boolean isControlled) {
         this.IP=IP;
         this.mediaProjection = mediaProjection;
         this.audioRecord =audioRecord;
@@ -155,7 +178,17 @@ public class SenderSocketManager implements AudioSocketClient.SocketCallback,Scr
     }
 
     @Override
-    public void onReceiveAudioData(String command) {
-        Log.e(TAG,"onReceiveAudioData: "+command);
+    public void onReceiveCommand(String command) {
+
+
+        String[] strings = command.split(":");
+        Command command1 = new Command();
+        command1.setType(strings[0]);
+        command1.setX(Float.parseFloat(strings[1]));
+        command1.setY(Float.parseFloat(strings[2]));
+
+        controlService.addCommand(command1);
+
+        Log.e(TAG,"onReceiveCommand: "+command);
     }
 }

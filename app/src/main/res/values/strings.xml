@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">WFDProjection</string>
+    <string name="accessibility_description">启动远程操作请开启这个</string>
+    <string name="accessibility_service_label">WFD无障碍远程操作</string>
 </resources>

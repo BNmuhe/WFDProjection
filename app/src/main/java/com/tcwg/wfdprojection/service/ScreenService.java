@@ -124,7 +124,8 @@ public class ScreenService extends Service {
 
             Log.e(TAG, "project and audioRecord start");
             // 初始化发送端，包括视频和音频socket
-            senderSocketManager = new SenderSocketManager(wifiP2pInfo.groupOwnerAddress.getHostAddress(), mediaProjection,audioRecord,true);
+            senderSocketManager = SenderSocketManager.getInstance();
+            senderSocketManager.initSenderSocketManager(wifiP2pInfo.groupOwnerAddress.getHostAddress(), mediaProjection,audioRecord,true);
 
 
         }else {
@@ -134,7 +135,8 @@ public class ScreenService extends Service {
             }
             Log.e(TAG, "project start");
             // 初始化发送端，包括视频socket
-            senderSocketManager = new SenderSocketManager(wifiP2pInfo.groupOwnerAddress.getHostAddress(), mediaProjection);
+            senderSocketManager = SenderSocketManager.getInstance();
+            senderSocketManager.initSenderSocketManager(wifiP2pInfo.groupOwnerAddress.getHostAddress(), mediaProjection);
         }
 
 

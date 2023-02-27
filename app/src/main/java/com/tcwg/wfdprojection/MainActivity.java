@@ -1,8 +1,10 @@
 package com.tcwg.wfdprojection;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
@@ -22,6 +24,8 @@ public class MainActivity extends BaseActivity {
     private Button btnReceiver;
     private Button btnSender;
 
+    private Button btnGetAccessibility;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,8 +35,10 @@ public class MainActivity extends BaseActivity {
         btnCheckPermission=findViewById(R.id.btnCheckPermission);
         btnReceiver= findViewById(R.id.btnReceiver);
         btnSender= findViewById(R.id.btnSender);
+        btnGetAccessibility=findViewById(R.id.btnGetAccessibility);
 
         btnCheckPermission.setEnabled(true);
+        btnGetAccessibility.setEnabled(false);
         btnSender.setEnabled(false);
         btnReceiver.setEnabled(false);
 
@@ -42,13 +48,22 @@ public class MainActivity extends BaseActivity {
         //requestPermission
         btnCheckPermission.setOnClickListener(v ->checkPermission());
 
+        btnGetAccessibility.setOnClickListener(v -> getAccessibility());
+
         btnReceiver.setOnClickListener(v ->
                 startActivity(ReceiverActivity.class));
 
         btnSender.setOnClickListener(v ->
                 startActivity(SenderActivity.class));
+
     }
 
+
+    private void getAccessibility() {
+
+        startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+
+    }
 
     private void checkPermission(){
         ActivityCompat.requestPermissions(MainActivity.this,
@@ -77,6 +92,7 @@ public class MainActivity extends BaseActivity {
             }
             showToast("已获得权限");
             btnSender.setEnabled(true);
+            btnGetAccessibility.setEnabled(true);
             btnReceiver.setEnabled(true);
         }
     }

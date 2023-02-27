@@ -67,7 +67,7 @@ public class SurfaceActivity extends BaseActivity implements View.OnTouchListene
             case MotionEvent.ACTION_DOWN:
             //    Log.e(TAG,"起始位置：(" + event.getX() + "," + event.getY());
                 if(receiverSocketManager!=null){
-                    receiverSocketManager.sendControlData("start: " + event.getX() + "," + event.getY());
+                    receiverSocketManager.sendControlData("start:" + event.getX() + ":" + event.getY());
                 }
                 break;
             /**
@@ -76,7 +76,7 @@ public class SurfaceActivity extends BaseActivity implements View.OnTouchListene
             case MotionEvent.ACTION_MOVE:
                // Log.e(TAG,"实时位置：(" + event.getX() + "," + event.getY());
                 if(receiverSocketManager!=null){
-                    receiverSocketManager.sendControlData("keep: " + event.getX() + "," + event.getY());
+                    receiverSocketManager.sendControlData("keep:" + event.getX() + ":" + event.getY());
                 }
                 break;
             /**
@@ -85,7 +85,7 @@ public class SurfaceActivity extends BaseActivity implements View.OnTouchListene
             case MotionEvent.ACTION_UP:
               //  Log.e(TAG,"结束位置：(" + event.getX() + "," + event.getY());
                 if(receiverSocketManager!=null){
-                    receiverSocketManager.sendControlData("stop: " + event.getX() + "," + event.getY());
+                    receiverSocketManager.sendControlData("end:" + event.getX() + ":" + event.getY());
                 }
                 break;
             default:

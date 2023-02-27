@@ -48,7 +48,6 @@ public class ReceiverSocketManager implements ScreenSocketServer.SocketCallback,
         Log.e(TAG, "startAudioRecode start");
         audioDecoder = new AudioDecoder();
         audioDecoder.startDecoder();
-
     }
 
     public void startProjection(Surface surface) {

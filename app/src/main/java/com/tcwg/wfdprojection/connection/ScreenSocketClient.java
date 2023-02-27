@@ -2,6 +2,7 @@ package com.tcwg.wfdprojection.connection;
 
 import android.util.Log;
 
+import com.tcwg.wfdprojection.constant.MyDeviceConstants;
 import com.tcwg.wfdprojection.constant.P2pDeviceConstants;
 import com.tcwg.wfdprojection.manager.SenderSocketManager;
 
@@ -24,6 +25,8 @@ public class ScreenSocketClient extends WebSocketClient {
     @Override
     public void onOpen(ServerHandshake handshake) {
         Log.e(TAG, "onOpen");
+        send(MyDeviceConstants.getVideoWidth()+":"+MyDeviceConstants.getVideoHeight());
+        Log.e(TAG,"send my device constant "+MyDeviceConstants.getVideoWidth()+" "+MyDeviceConstants.getVideoHeight());
     }
 
     @Override

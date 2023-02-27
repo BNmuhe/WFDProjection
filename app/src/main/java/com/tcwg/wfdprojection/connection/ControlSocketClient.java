@@ -24,7 +24,7 @@ public class ControlSocketClient extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
-        Log.e(TAG, "onMessage");
+   //     Log.e(TAG, "onMessage");
         socketCallback.onReceiveCommand(message);
     }
 

@@ -141,7 +141,9 @@ public class SenderSocketManager implements AudioSocketClient.SocketCallback,Scr
     }
 
     public void sendControlData(String s)  {
-        controlSocketClient.sendData(s);
+        if(controlSocketClient!=null){
+            controlSocketClient.sendData(s);
+        }
     }
 
     public void close() {
@@ -189,6 +191,6 @@ public class SenderSocketManager implements AudioSocketClient.SocketCallback,Scr
 
         controlService.addCommand(command1);
 
-        Log.e(TAG,"onReceiveCommand: "+command);
+       // Log.e(TAG,"onReceiveCommand: "+command);
     }
 }

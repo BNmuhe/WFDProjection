@@ -173,11 +173,5 @@ public class ReceiverActivity extends BaseActivity{
         }
     }
 
-    private  void initConstant(){
-        Point point = new Point();
-        getWindowManager().getDefaultDisplay().getRealSize(point);
-        MyDeviceConstants.setVideoHeight(point.y);
-        MyDeviceConstants.setVideoWidth(point.x);
-        Log.e(TAG,"set Constant width "+ MyDeviceConstants.getVideoWidth()+" height "+ MyDeviceConstants.getVideoHeight()+" fps "+ MyDeviceConstants.getScreenFrameRate());
-    }
+
 }

@@ -3,6 +3,7 @@ package com.tcwg.wfdprojection.activity;
 import androidx.annotation.NonNull;
 
 import android.annotation.SuppressLint;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -15,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.tcwg.wfdprojection.R;
+import com.tcwg.wfdprojection.constant.MyDeviceConstants;
 import com.tcwg.wfdprojection.manager.ReceiverSocketManager;
 import com.tcwg.wfdprojection.service.ScreenService;
 
@@ -34,6 +36,14 @@ public class SurfaceActivity extends BaseActivity implements View.OnTouchListene
         SurfaceView surfaceView = findViewById(R.id.sv_screen);
         LinearLayout llTouch = findViewById(R.id.ll_touch);
         llTouch.setOnTouchListener(this);
+
+        //设置接收屏幕参数
+        Point point = new Point();
+        getWindowManager().getDefaultDisplay().getSize(point);
+        MyDeviceConstants.setVideoHeight(point.y);
+        MyDeviceConstants.setVideoWidth(point.x);
+
+
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(@NonNull SurfaceHolder holder) {
@@ -67,7 +77,7 @@ public class SurfaceActivity extends BaseActivity implements View.OnTouchListene
             case MotionEvent.ACTION_DOWN:
             //    Log.e(TAG,"起始位置：(" + event.getX() + "," + event.getY());
                 if(receiverSocketManager!=null){
-                    receiverSocketManager.sendControlData("start:" + event.getX() + ":" + event.getY());
+                    receiverSocketManager.sendControlData("start:" +MyDeviceConstants.resetX(event.getX())+ ":" + MyDeviceConstants.resetY(event.getY()));
                 }
                 break;
             /**
@@ -76,7 +86,7 @@ public class SurfaceActivity extends BaseActivity implements View.OnTouchListene
             case MotionEvent.ACTION_MOVE:
                // Log.e(TAG,"实时位置：(" + event.getX() + "," + event.getY());
                 if(receiverSocketManager!=null){
-                    receiverSocketManager.sendControlData("keep:" + event.getX() + ":" + event.getY());
+                    receiverSocketManager.sendControlData("keep:" + MyDeviceConstants.resetX(event.getX()) + ":" + MyDeviceConstants.resetY(event.getY()));
                 }
                 break;
             /**
@@ -85,7 +95,7 @@ public class SurfaceActivity extends BaseActivity implements View.OnTouchListene
             case MotionEvent.ACTION_UP:
               //  Log.e(TAG,"结束位置：(" + event.getX() + "," + event.getY());
                 if(receiverSocketManager!=null){
-                    receiverSocketManager.sendControlData("end:" + event.getX() + ":" + event.getY());
+                    receiverSocketManager.sendControlData("end:" + MyDeviceConstants.resetX(event.getX()) + ":" + MyDeviceConstants.resetY(event.getY()));
                 }
                 break;
             default:

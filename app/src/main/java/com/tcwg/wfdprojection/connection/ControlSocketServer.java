@@ -3,6 +3,7 @@ package com.tcwg.wfdprojection.connection;
 import android.util.Log;
 
 import com.tcwg.wfdprojection.constant.MyDeviceConstants;
+import com.tcwg.wfdprojection.constant.P2pDeviceConstants;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -36,6 +37,10 @@ public class ControlSocketServer extends WebSocketServer {
     public void onMessage(WebSocket conn, String message) {
         //在这里要接收判断对方的屏幕是竖着的还是横着的
         //在后台中计算出点击屏幕时的相对位置，进行判断，然后将命令发出
+        String[] constant = message.split(":");
+        P2pDeviceConstants.setVideoWidth(Integer.parseInt(constant[0]));
+        P2pDeviceConstants.setVideoHeight(Integer.parseInt(constant[1]));
+        Log.e(TAG,"receive p2p device constant "+P2pDeviceConstants.getVideoWidth()+" "+P2pDeviceConstants.getVideoHeight());
     }
 
     @Override

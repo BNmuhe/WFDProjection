@@ -141,6 +141,7 @@ public class SenderActivity extends BaseActivity {
 
         initView();
         initEvent();
+        initConstant();
 
 
     }

@@ -20,7 +20,6 @@ public class MainActivity extends BaseActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int CODE_REQ_PERMISSIONS = 665;
 
-    private Button btnCheckPermission;
     private Button btnReceiver;
     private Button btnSender;
 
@@ -32,7 +31,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
 
-        btnCheckPermission=findViewById(R.id.btnCheckPermission);
+        Button btnCheckPermission = findViewById(R.id.btnCheckPermission);
         btnReceiver= findViewById(R.id.btnReceiver);
         btnSender= findViewById(R.id.btnSender);
         btnGetAccessibility=findViewById(R.id.btnGetAccessibility);
@@ -41,6 +40,9 @@ public class MainActivity extends BaseActivity {
         btnGetAccessibility.setEnabled(false);
         btnSender.setEnabled(false);
         btnReceiver.setEnabled(false);
+
+        //获取当前屏幕的高和宽
+        initConstant();
 
         checkPermission();
 
